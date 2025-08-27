@@ -8,7 +8,7 @@ export function BackButton() {
   const router = useRouter();
 
   return (
-    <Button variant="outline" onClick={() => router.back()} className="bg-secondary text-secondary-foreground hover:bg-secondary/80">
+    <Button variant="link" onClick={() => router.back()} className="text-teal-500 hover:text-teal-400 p-0 h-auto">
       <ChevronLeft className="mr-2 h-4 w-4" />
       Back
     </Button>
