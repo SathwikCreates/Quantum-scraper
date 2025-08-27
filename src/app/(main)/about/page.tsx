@@ -8,8 +8,8 @@ import { Database, BarChart2, Briefcase } from "lucide-react";
 
 export default function AboutPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">About Quantum Scraper</h1>
+    <div className="space-y-6 w-full max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold tracking-tight text-center">About Quantum Scraper</h1>
 
       <Card>
         <CardHeader>

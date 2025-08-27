@@ -72,8 +72,8 @@ export default function JobsPage() {
     });
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Job Status</h1>
+        <div className="space-y-6 w-full max-w-7xl mx-auto">
+            <h1 className="text-3xl font-bold tracking-tight text-center">Jobs</h1>
             <Card>
                 <CardHeader>
                     <CardTitle>All Jobs</CardTitle>

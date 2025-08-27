@@ -33,6 +33,7 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --header-background: 217 33% 17%;
   }
   .dark {
     --background: 0 0% 0%; /* black */
@@ -41,8 +42,8 @@ body {
     --card-foreground: 0 0% 98%; /* white */
     --popover: 217 33% 17%; /* navy blue */
     --popover-foreground: 0 0% 98%; /* white */
-    --primary: 16 93% 59%; /* deep orange */
-    --primary-foreground: 210 40% 98%;
+    --primary: 16 100% 62%; /* deep orange */
+    --primary-foreground: 0 0% 98%;
     --secondary: 176 56% 51%; /* teal */
     --secondary-foreground: 0 0% 0%;
     --muted: 217 33% 27%;
@@ -53,12 +54,13 @@ body {
     --destructive-foreground: 0 0% 98%;
     --border: 217 33% 27%;
     --input: 217 33% 27%;
-    --ring: 16 93% 59%; /* deep orange */
+    --ring: 16 100% 62%; /* deep orange */
     --chart-1: 176 56% 51%; /* teal */
     --chart-2: 282 44% 53%; /* magenta */
     --chart-3: 16 93% 59%; /* deep orange */
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --header-background: 210 29% 25%; /* dark slate gray */
   }
 }
 

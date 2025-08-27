@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Activity, CheckCircle, DatabaseZap } from "lucide-react";
+import { BackButton } from "@/components/layout/back-button";
 
 type JobStatus = 'Completed' | 'Running' | 'Failed';
 
@@ -42,8 +43,11 @@ const getStatusBadge = (status: JobStatus) => {
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+    <div className="space-y-6 w-full max-w-7xl mx-auto">
+       <div className="flex items-center justify-between">
+        <BackButton />
+        <h1 className="text-3xl font-bold tracking-tight text-center flex-1">Dashboard</h1>
+      </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

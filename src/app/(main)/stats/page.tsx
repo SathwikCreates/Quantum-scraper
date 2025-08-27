@@ -46,8 +46,8 @@ const activityChartConfig = {
 
 export default function StatisticsPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Statistics</h1>
+    <div className="space-y-6 w-full max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold tracking-tight text-center">Statistics</h1>
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader>
@@ -63,8 +63,9 @@ export default function StatisticsPage() {
                   tickLine={false}
                   tickMargin={10}
                   axisLine={false}
+                  stroke="hsl(var(--foreground))"
                 />
-                <YAxis />
+                <YAxis stroke="hsl(var(--foreground))" />
                 <Tooltip
                   cursor={false}
                   content={<ChartTooltipContent indicator="dot" />}
@@ -89,8 +90,9 @@ export default function StatisticsPage() {
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
+                  stroke="hsl(var(--foreground))"
                 />
-                <YAxis />
+                <YAxis stroke="hsl(var(--foreground))" />
                 <Tooltip content={<ChartTooltipContent hideLabel />} />
                 <Line
                   dataKey="desktop"
