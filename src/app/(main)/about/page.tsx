@@ -10,6 +10,9 @@ export default function AboutPage() {
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">About Quantum Scraper</h1>
+      <p className="text-center text-accent italic text-lg">
+        “We show real-time jobs, while others only show you the job.”
+      </p>
 
       <Card>
         <CardHeader>

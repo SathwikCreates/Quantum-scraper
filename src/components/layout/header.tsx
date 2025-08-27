@@ -39,9 +39,6 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <div className="absolute top-1/2 -translate-y-1/2 right-6 hidden md:block">
-            <p className="text-xs text-accent/80 font-medium">“We show real-time jobs, while others only show you the job.”</p>
-        </div>
       </div>
     </header>
   );
