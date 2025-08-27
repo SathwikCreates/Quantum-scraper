@@ -32,7 +32,7 @@ export function Header() {
                 "text-sm font-medium transition-colors hover:text-accent hover:underline underline-offset-4",
                 pathname === link.href
                   ? "text-accent"
-                  : "text-secondary-foreground"
+                  : "text-foreground"
               )}
             >
               {link.label}

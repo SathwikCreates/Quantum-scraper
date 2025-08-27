@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -18,13 +21,26 @@ import { Briefcase, Activity, CheckCircle, DatabaseZap } from "lucide-react";
 
 type JobStatus = 'Completed' | 'Running' | 'Failed';
 
-const recentJobs: { id: string; target: string; status: JobStatus; dataPoints: number }[] = [
-    { id: 'JOB-001', target: 'example.com', status: 'Completed', dataPoints: 1200 },
-    { id: 'JOB-002', target: 'anothersite.dev', status: 'Running', dataPoints: 450 },
-    { id: 'JOB-003', target: 'test-scrape.io', status: 'Failed', dataPoints: 0 },
-    { id: 'JOB-004', target: 'data-source.net', status: 'Completed', dataPoints: 8750 },
-    { id: 'JOB-005', target: 'web-archive.org', status: 'Completed', dataPoints: 2300 },
-  ];
+type RecentJob = {
+  id: string;
+  target: string;
+  status: JobStatus;
+  dataPoints: number;
+};
+
+type DashboardData = {
+  stats: {
+    totalJobs: string;
+    totalJobsChange: string;
+    activeJobs: string;
+    activeJobsChange: string;
+    dataPoints: string;
+    dataPointsChange: string;
+    successRate: string;
+    successRateChange: string;
+  };
+  recentJobs: RecentJob[];
+};
 
 const getStatusBadge = (status: JobStatus) => {
     switch (status) {
@@ -37,10 +53,31 @@ const getStatusBadge = (status: JobStatus) => {
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
-  };
-
+};
 
 export default function DashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/api/mockData?type=dashboard');
+      const jsonData = await response.json();
+      setData(jsonData);
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 60000); // Refresh every 60 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!data) {
+    return <div className="w-full text-center text-foreground">Loading dashboard...</div>;
+  }
+
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">Dashboard</h1>
@@ -51,8 +88,8 @@ export default function DashboardPage() {
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">1,234</div>
-            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+            <div className="text-2xl font-bold text-accent">{data.stats.totalJobs}</div>
+            <p className="text-xs text-muted-foreground">{data.stats.totalJobsChange}</p>
           </CardContent>
         </Card>
         <Card>
@@ -61,8 +98,8 @@ export default function DashboardPage() {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">12</div>
-            <p className="text-xs text-muted-foreground">Currently running</p>
+            <div className="text-2xl font-bold text-accent">{data.stats.activeJobs}</div>
+            <p className="text-xs text-muted-foreground">{data.stats.activeJobsChange}</p>
           </CardContent>
         </Card>
         <Card>
@@ -71,8 +108,8 @@ export default function DashboardPage() {
             <DatabaseZap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">1.4M</div>
-            <p className="text-xs text-muted-foreground">+180.1% from last month</p>
+            <div className="text-2xl font-bold text-accent">{data.stats.dataPoints}</div>
+            <p className="text-xs text-muted-foreground">{data.stats.dataPointsChange}</p>
           </CardContent>
         </Card>
         <Card>
@@ -81,8 +118,8 @@ export default function DashboardPage() {
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">98.2%</div>
-            <p className="text-xs text-muted-foreground">+2.5% from last month</p>
+            <div className="text-2xl font-bold text-accent">{data.stats.successRate}</div>
+            <p className="text-xs text-muted-foreground">{data.stats.successRateChange}</p>
           </CardContent>
         </Card>
       </div>
@@ -102,7 +139,7 @@ export default function DashboardPage() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {recentJobs.map((job, index) => (
+                    {data.recentJobs.map((job, index) => (
                         <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
                             <TableCell className="font-medium">{job.id}</TableCell>
                             <TableCell>{job.target}</TableCell>

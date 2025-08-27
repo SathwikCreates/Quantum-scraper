@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -27,19 +27,27 @@ type DataRecord = {
   content: string;
 };
 
-const sampleData: DataRecord[] = [
-  { id: 'REC-001', sourceJob: 'JOB-2300', timestamp: '2023-10-27 09:32 AM', content: '{"product": "Laptop", "price": 1200}' },
-  { id: 'REC-002', sourceJob: 'JOB-2300', timestamp: '2023-10-27 09:33 AM', content: '{"product": "Mouse", "price": 25}' },
-  { id: 'REC-003', sourceJob: 'JOB-2299', timestamp: '2023-10-27 09:05 AM', content: '{"user": "alex", "post": "Just saw the new movie, it was great!"}' },
-  { id: 'REC-004', sourceJob: 'JOB-2297', timestamp: '2023-10-26 04:10 PM', content: '{"flight": "UA234", "destination": "SFO", "price": 345.60}' },
-  { id: 'REC-005', sourceJob: 'JOB-2297', timestamp: '2023-10-26 04:11 PM', content: '{"flight": "DL588", "destination": "JFK", "price": 289.00}' },
-  { id: 'REC-006', sourceJob: 'JOB-2301', timestamp: '2023-10-27 10:15 AM', content: '{"product": "Keyboard", "price": 75}' },
-];
-
 export default function ExplorePage() {
     const [searchTerm, setSearchTerm] = useState('');
+    const [data, setData] = useState<DataRecord[]>([]);
 
-    const filteredData = sampleData.filter(record =>
+    const fetchData = async () => {
+        try {
+            const response = await fetch('/api/mockData?type=explore');
+            const jsonData = await response.json();
+            setData(jsonData);
+        } catch (error) {
+            console.error("Failed to fetch explore data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+        const interval = setInterval(fetchData, 60000); // Refresh every 60 seconds
+        return () => clearInterval(interval);
+    }, []);
+
+    const filteredData = data.filter(record =>
         record.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.sourceJob.toLowerCase().includes(searchTerm.toLowerCase()) ||
         record.content.toLowerCase().includes(searchTerm.toLowerCase())
@@ -85,7 +93,7 @@ export default function ExplorePage() {
                                 </TableRow>
                             )) : (
                               <TableRow>
-                                <TableCell colSpan={4} className="h-24 text-center">
+                                <TableCell colSpan={4} className="h-24 text-center text-foreground">
                                   No results found.
                                 </TableCell>
                               </TableRow>

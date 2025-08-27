@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -27,24 +27,16 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 
+type JobStatus = 'Completed' | 'Running' | 'Failed' | 'Queued';
+
 type Job = {
   id: string;
-  target: string;
-  status: 'Completed' | 'Running' | 'Failed' | 'Pending';
-  dataPoints: number;
-  progress: number;
-  startedAt: string;
+  backend: string;
+  status: JobStatus;
+  queuePosition: number | null;
+  submittedTime: string;
+  runtime: string;
 };
-
-const allJobs: Job[] = [
-    { id: 'JOB-2301', target: 'ecom-store.com/products', status: 'Running', dataPoints: 1250, progress: 62, startedAt: '2023-10-27 10:00 AM' },
-    { id: 'JOB-2300', target: 'news-aggregator.net/articles', status: 'Completed', dataPoints: 5420, progress: 100, startedAt: '2023-10-27 09:30 AM' },
-    { id: 'JOB-2299', target: 'social-media-trends.io/posts', status: 'Completed', dataPoints: 15230, progress: 100, startedAt: '2023-10-27 09:00 AM' },
-    { id: 'JOB-2298', target: 'finance-data.co/stocks', status: 'Failed', dataPoints: 0, progress: 15, startedAt: '2023-10-26 05:00 PM' },
-    { id: 'JOB-2297', target: 'travel-deals.com/flights', status: 'Completed', dataPoints: 8800, progress: 100, startedAt: '2023-10-26 04:00 PM' },
-    { id: 'JOB-2296', target: 'recipe-database.org/recipes', status: 'Pending', dataPoints: 0, progress: 0, startedAt: '2023-10-27 10:05 AM' },
-    { id: 'JOB-2295', target: 'real-estate-listings.com/homes', status: 'Running', dataPoints: 340, progress: 22, startedAt: '2023-10-27 10:02 AM' },
-];
 
 const getStatusBadge = (status: Job['status']) => {
     switch (status) {
@@ -54,8 +46,8 @@ const getStatusBadge = (status: Job['status']) => {
         return <Badge variant="default" className="bg-accent/80 text-accent-foreground">Running</Badge>;
       case 'Failed':
         return <Badge variant="destructive">Failed</Badge>;
-      case 'Pending':
-        return <Badge variant="secondary" className="bg-muted text-muted-foreground">Pending</Badge>;
+      case 'Queued':
+        return <Badge variant="secondary" className="bg-muted text-muted-foreground">Queued</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -64,9 +56,26 @@ const getStatusBadge = (status: Job['status']) => {
 export default function JobsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [jobs, setJobs] = useState<Job[]>([]);
 
-    const filteredJobs = allJobs.filter(job => {
-        const matchesSearch = job.id.toLowerCase().includes(searchTerm.toLowerCase()) || job.target.toLowerCase().includes(searchTerm.toLowerCase());
+    const fetchData = async () => {
+        try {
+            const response = await fetch('/api/mockData?type=jobs');
+            const jsonData = await response.json();
+            setJobs(jsonData);
+        } catch (error) {
+            console.error("Failed to fetch jobs data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+        const interval = setInterval(fetchData, 60000); // Refresh every 60 seconds
+        return () => clearInterval(interval);
+    }, []);
+
+    const filteredJobs = jobs.filter(job => {
+        const matchesSearch = job.id.toLowerCase().includes(searchTerm.toLowerCase()) || job.backend.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || job.status.toLowerCase() === statusFilter;
         return matchesSearch && matchesStatus;
     });
@@ -77,10 +86,10 @@ export default function JobsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-foreground">All Jobs</CardTitle>
-                    <CardDescription className="text-muted-foreground">Search, filter, and monitor all scraping jobs.</CardDescription>
+                    <CardDescription className="text-muted-foreground">Search, filter, and monitor all quantum jobs.</CardDescription>
                     <div className="mt-4 flex flex-col md:flex-row gap-2">
                         <Input
-                            placeholder="Search by Job ID or Target..."
+                            placeholder="Search by Job ID or Backend..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="max-w-sm"
@@ -94,7 +103,7 @@ export default function JobsPage() {
                                 <SelectItem value="running">Running</SelectItem>
                                 <SelectItem value="completed">Completed</SelectItem>
                                 <SelectItem value="failed">Failed</SelectItem>
-                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="queued">Queued</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -104,31 +113,28 @@ export default function JobsPage() {
                         <TableHeader>
                             <TableRow className="hover:bg-card/60">
                                 <TableHead className="text-foreground">Job ID</TableHead>
-                                <TableHead className="text-foreground">Target</TableHead>
+                                <TableHead className="text-foreground">Backend</TableHead>
                                 <TableHead className="text-foreground">Status</TableHead>
-                                <TableHead className="text-foreground">Started At</TableHead>
-                                <TableHead className="text-foreground">Progress</TableHead>
-                                <TableHead className="text-right text-foreground">Data Points</TableHead>
+                                <TableHead className="text-foreground">Submitted Time</TableHead>
+                                <TableHead className="text-foreground">Queue Position</TableHead>
+                                <TableHead className="text-right text-foreground">Runtime</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filteredJobs.length > 0 ? filteredJobs.map((job, index) => (
                                 <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
                                     <TableCell className="font-medium">{job.id}</TableCell>
-                                    <TableCell className="truncate max-w-xs">{job.target}</TableCell>
+                                    <TableCell className="truncate max-w-xs">{job.backend}</TableCell>
                                     <TableCell>{getStatusBadge(job.status)}</TableCell>
-                                    <TableCell>{job.startedAt}</TableCell>
+                                    <TableCell>{job.submittedTime}</TableCell>
                                     <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <Progress value={job.progress} className="w-24 bg-muted" />
-                                            <span className="text-sm text-muted-foreground">{job.progress}%</span>
-                                        </div>
+                                        {job.queuePosition !== null ? job.queuePosition : 'N/A'}
                                     </TableCell>
-                                    <TableCell className="text-right">{job.dataPoints.toLocaleString()}</TableCell>
+                                    <TableCell className="text-right">{job.runtime}</TableCell>
                                 </TableRow>
                             )) : (
                               <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center">
+                                <TableCell colSpan={6} className="h-24 text-center text-foreground">
                                   No results found.
                                 </TableCell>
                               </TableRow>
