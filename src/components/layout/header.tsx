@@ -16,8 +16,8 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-secondary py-4 shadow-md">
-      <div className="container flex flex-col items-center justify-center px-4 md:px-6">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-secondary/80 py-4 shadow-md backdrop-blur">
+      <div className="container flex flex-col items-center justify-center px-4 md:px-6 relative">
         <Link href="/" className="mb-2">
           <h1 className="text-3xl font-bold text-accent">
             Quantum Dashboard
@@ -39,6 +39,9 @@ export function Header() {
             </Link>
           ))}
         </nav>
+        <div className="absolute top-1/2 -translate-y-1/2 right-6 hidden md:block">
+            <p className="text-xs text-accent/80 font-medium">“We show real-time jobs, while others only show you the job.”</p>
+        </div>
       </div>
     </header>
   );

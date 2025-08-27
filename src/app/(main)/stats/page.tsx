@@ -13,6 +13,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  TimeScale,
+  ChartOptions,
 } from 'chart.js';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -25,23 +27,29 @@ ChartJS.register(
   ArcElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale
 );
 
 type StatsData = {
-    avgWaitTime: { labels: string[]; data: number[] };
-    backendUsage: { labels: string[]; data: number[] };
-    jobStatusDistribution: { labels: string[]; data: number[] };
+    avg_wait_seconds: number;
+    trends: { time: string; avg_wait_seconds: number }[];
+    backend_usage: { backend: string; jobs: number }[];
+    running_vs_completed: { time: string; running: number; completed: number }[];
+    busiest_backend: string;
+    fastest_backend: string;
 };
 
 export default function StatisticsPage() {
     const [statsData, setStatsData] = useState<StatsData | null>(null);
+    const [lastUpdated, setLastUpdated] = useState<string>('N/A');
 
     const fetchData = async () => {
         try {
             const response = await fetch('/api/mockData?type=stats');
             const jsonData = await response.json();
             setStatsData(jsonData);
+            setLastUpdated(new Date().toLocaleTimeString());
         } catch (error) {
             console.error("Failed to fetch statistics data:", error);
         }
@@ -49,7 +57,7 @@ export default function StatisticsPage() {
 
     useEffect(() => {
         fetchData();
-        const interval = setInterval(fetchData, 60000); // Refresh every 60 seconds
+        const interval = setInterval(fetchData, 60000);
         return () => clearInterval(interval);
     }, []);
 
@@ -57,7 +65,7 @@ export default function StatisticsPage() {
         return <div className="w-full text-center text-foreground">Loading statistics...</div>;
     }
 
-    const chartOptions = {
+    const chartOptions: ChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -77,7 +85,7 @@ export default function StatisticsPage() {
                     color: '#EEEEEE',
                 },
                 grid: {
-                    color: '#393E46',
+                    color: 'hsl(var(--muted))',
                 },
             },
             y: {
@@ -85,65 +93,59 @@ export default function StatisticsPage() {
                     color: '#EEEEEE',
                 },
                 grid: {
-                    color: '#393E46',
-                },
-            },
-        },
-    };
-
-    const pieChartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'top' as const,
-                labels: {
-                    color: '#EEEEEE',
+                    color: 'hsl(var(--muted))',
                 },
             },
         },
     };
     
     const lineChartData = {
-        labels: statsData.avgWaitTime.labels,
+        labels: statsData.trends.map(t => t.time),
         datasets: [
             {
                 label: 'Average Wait Time (s)',
-                data: statsData.avgWaitTime.data,
-                borderColor: '#00ADB5',
-                backgroundColor: 'rgba(0, 173, 181, 0.5)',
+                data: statsData.trends.map(t => t.avg_wait_seconds),
+                borderColor: 'hsl(var(--accent))',
+                backgroundColor: 'hsla(var(--accent), 0.5)',
                 tension: 0.3,
             },
         ],
     };
 
     const barChartData = {
-        labels: statsData.backendUsage.labels,
+        labels: statsData.backend_usage.map(b => b.backend),
         datasets: [
             {
                 label: 'Job Count',
-                data: statsData.backendUsage.data,
-                backgroundColor: '#00ADB5',
+                data: statsData.backend_usage.map(b => b.jobs),
+                backgroundColor: 'hsl(var(--accent))',
             },
         ],
     };
 
-    const pieChartData = {
-        labels: statsData.jobStatusDistribution.labels,
+    const stackedBarChartData = {
+        labels: statsData.running_vs_completed.map(d => d.time),
         datasets: [
             {
-                label: 'Job Status',
-                data: statsData.jobStatusDistribution.data,
-                backgroundColor: ['#00ADB5', '#393E46', '#EEEEEE', '#888'],
-                borderColor: '#222831',
-                borderWidth: 2,
+                label: 'Running',
+                data: statsData.running_vs_completed.map(d => d.running),
+                backgroundColor: 'hsla(var(--accent), 0.8)',
+            },
+            {
+                label: 'Completed',
+                data: statsData.running_vs_completed.map(d => d.completed),
+                 backgroundColor: 'hsla(var(--accent), 0.5)',
             },
         ],
     };
+    const stackedBarOptions = { ...chartOptions, scales: { ...chartOptions.scales, x: { ...chartOptions.scales?.x, stacked: true }, y: { ...chartOptions.scales?.y, stacked: true } }};
 
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">Statistics</h1>
+        <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Statistics</h1>
+            <p className="text-sm text-muted-foreground">Last updated: {lastUpdated}</p>
+        </div>
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader>
@@ -151,7 +153,7 @@ export default function StatisticsPage() {
             <CardDescription className="text-muted-foreground">Average job wait time over the last hour.</CardDescription>
           </CardHeader>
           <CardContent className="h-[300px]">
-            <Line options={chartOptions} data={lineChartData} />
+            <Line options={chartOptions as any} data={lineChartData} />
           </CardContent>
         </Card>
 
@@ -161,21 +163,41 @@ export default function StatisticsPage() {
             <CardDescription className="text-muted-foreground">Distribution of jobs across different backends.</CardDescription>
           </CardHeader>
           <CardContent className="h-[300px]">
-             <Bar options={chartOptions} data={barChartData} />
+             <Bar options={chartOptions as any} data={barChartData} />
           </CardContent>
         </Card>
       </div>
-      <Card>
-        <CardHeader className="items-center">
-            <CardTitle className="text-accent">Job Status Distribution</CardTitle>
-            <CardDescription className="text-muted-foreground">The current status of all submitted jobs.</CardDescription>
-        </CardHeader>
-        <CardContent className="h-[350px] flex justify-center">
-            <div className="w-full max-w-[350px]">
-                <Pie options={pieChartOptions} data={pieChartData} />
-            </div>
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-accent">Running vs Completed Jobs</CardTitle>
+                <CardDescription className="text-muted-foreground">The current status of all submitted jobs.</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[350px] flex justify-center">
+                <Bar options={stackedBarOptions as any} data={stackedBarChartData} />
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-accent">Key Insights</CardTitle>
+                <CardDescription className="text-muted-foreground">At a glance statistics.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                 <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
+                    <p className="text-foreground">Busiest Backend</p>
+                    <p className="font-bold text-accent">{statsData.busiest_backend}</p>
+                </div>
+                 <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
+                    <p className="text-foreground">Fastest Backend</p>
+                    <p className="font-bold text-accent">{statsData.fastest_backend}</p>
+                </div>
+                 <div className="flex items-center justify-between p-4 bg-secondary rounded-lg">
+                    <p className="text-foreground">Average Wait Time</p>
+                    <p className="font-bold text-accent">{statsData.avg_wait_seconds}s</p>
+                </div>
+            </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

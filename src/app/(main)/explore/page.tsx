@@ -20,22 +20,24 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 
-type DataRecord = {
-  id: string;
-  sourceJob: string;
+type RecordItem = {
+  record_id: string;
+  job_id: string;
   timestamp: string;
-  content: string;
+  content: object;
 };
 
 export default function ExplorePage() {
     const [searchTerm, setSearchTerm] = useState('');
-    const [data, setData] = useState<DataRecord[]>([]);
+    const [data, setData] = useState<RecordItem[]>([]);
+    const [lastUpdated, setLastUpdated] = useState<string>('N/A');
 
     const fetchData = async () => {
         try {
-            const response = await fetch('/api/mockData?type=explore');
+            const response = await fetch('/api/mockData?type=records');
             const jsonData = await response.json();
             setData(jsonData);
+            setLastUpdated(new Date().toLocaleTimeString());
         } catch (error) {
             console.error("Failed to fetch explore data:", error);
         }
@@ -43,40 +45,47 @@ export default function ExplorePage() {
 
     useEffect(() => {
         fetchData();
-        const interval = setInterval(fetchData, 60000); // Refresh every 60 seconds
+        const interval = setInterval(fetchData, 60000);
         return () => clearInterval(interval);
     }, []);
 
     const filteredData = data.filter(record =>
-        record.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.sourceJob.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.content.toLowerCase().includes(searchTerm.toLowerCase())
+        record.record_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        record.job_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        JSON.stringify(record.content).toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
         <div className="space-y-6 w-full max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">Explore Data</h1>
+             <div className="flex justify-between items-center">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">Explore Data</h1>
+                <p className="text-sm text-muted-foreground">Last updated: {lastUpdated}</p>
+            </div>
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-foreground">Scraped Data Records</CardTitle>
-                    <CardDescription className="text-muted-foreground">Search and explore the data collected from all jobs.</CardDescription>
-                    <div className="mt-4 flex gap-2">
-                        <Input
-                            placeholder="Search by Record ID, Job ID, or content..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="max-w-md"
-                        />
-                        <Button>
-                            <Search className="mr-2"/>
-                            Search
-                        </Button>
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <CardTitle className="text-accent">Scraped Data Records</CardTitle>
+                            <CardDescription className="text-muted-foreground">Search and explore the data collected from all jobs.</CardDescription>
+                        </div>
+                        <div className="flex gap-2">
+                            <Input
+                                placeholder="Search by Record ID, Job ID, or content..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="max-w-md bg-secondary border-muted placeholder:text-muted-foreground"
+                            />
+                            <Button variant="outline">
+                                <Search className="mr-2"/>
+                                Search
+                            </Button>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow className="hover:bg-card/60">
+                            <TableRow className="hover:bg-card/60 border-b border-muted">
                                 <TableHead className="text-foreground">Record ID</TableHead>
                                 <TableHead className="text-foreground">Source Job</TableHead>
                                 <TableHead className="text-foreground">Timestamp</TableHead>
@@ -85,11 +94,11 @@ export default function ExplorePage() {
                         </TableHeader>
                         <TableBody>
                             {filteredData.length > 0 ? filteredData.map((record, index) => (
-                                <TableRow key={record.id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
-                                    <TableCell className="font-medium">{record.id}</TableCell>
-                                    <TableCell>{record.sourceJob}</TableCell>
+                                <TableRow key={record.record_id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
+                                    <TableCell className="font-medium">{record.record_id}</TableCell>
+                                    <TableCell>{record.job_id}</TableCell>
                                     <TableCell>{record.timestamp}</TableCell>
-                                    <TableCell className="font-mono text-sm">{record.content}</TableCell>
+                                    <TableCell className="font-mono text-sm">{JSON.stringify(record.content)}</TableCell>
                                 </TableRow>
                             )) : (
                               <TableRow>

@@ -40,6 +40,7 @@ type DashboardData = {
     successRateChange: string;
   };
   recentJobs: RecentJob[];
+  lastUpdated: string;
 };
 
 const getStatusBadge = (status: JobStatus) => {
@@ -57,12 +58,14 @@ const getStatusBadge = (status: JobStatus) => {
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string>('N/A');
 
   const fetchData = async () => {
     try {
       const response = await fetch('/api/mockData?type=dashboard');
       const jsonData = await response.json();
       setData(jsonData);
+      setLastUpdated(new Date().toLocaleTimeString());
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     }
@@ -80,58 +83,61 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">Dashboard</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">Last updated: {lastUpdated}</p>
+      </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-foreground">Total Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium text-accent">Total Jobs</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">{data.stats.totalJobs}</div>
+            <div className="text-2xl font-bold text-foreground">{data.stats.totalJobs}</div>
             <p className="text-xs text-muted-foreground">{data.stats.totalJobsChange}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-foreground">Active Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium text-accent">Active Jobs</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">{data.stats.activeJobs}</div>
+            <div className="text-2xl font-bold text-foreground">{data.stats.activeJobs}</div>
             <p className="text-xs text-muted-foreground">{data.stats.activeJobsChange}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-foreground">Data Points Scraped</CardTitle>
+            <CardTitle className="text-sm font-medium text-accent">Avg Wait Time</CardTitle>
             <DatabaseZap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">{data.stats.dataPoints}</div>
+            <div className="text-2xl font-bold text-foreground">{data.stats.dataPoints}</div>
             <p className="text-xs text-muted-foreground">{data.stats.dataPointsChange}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-foreground">Success Rate</CardTitle>
+            <CardTitle className="text-sm font-medium text-accent">Success Rate</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-accent">{data.stats.successRate}</div>
+            <div className="text-2xl font-bold text-foreground">{data.stats.successRate}</div>
             <p className="text-xs text-muted-foreground">{data.stats.successRateChange}</p>
           </CardContent>
         </Card>
       </div>
       <Card>
         <CardHeader>
-            <CardTitle className="text-foreground">Recent Jobs</CardTitle>
+            <CardTitle className="text-accent">Recent Jobs</CardTitle>
             <CardDescription className="text-muted-foreground">An overview of the most recent scraping jobs.</CardDescription>
         </CardHeader>
         <CardContent>
             <Table>
                 <TableHeader>
-                    <TableRow className="hover:bg-card/60">
+                    <TableRow className="hover:bg-card/60 border-b border-muted">
                         <TableHead className="text-foreground">Job ID</TableHead>
                         <TableHead className="text-foreground">Target</TableHead>
                         <TableHead className="text-foreground">Status</TableHead>
