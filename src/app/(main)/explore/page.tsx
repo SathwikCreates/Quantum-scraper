@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, PlusSquare, MinusSquare } from "lucide-react";
 
 type RecordItem = {
   record_id: string;
@@ -26,6 +26,47 @@ type RecordItem = {
   timestamp: string;
   content: object;
 };
+
+const JsonViewer = ({ content }: { content: object }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  if (typeof content !== 'object' || content === null) {
+    return <span className="font-mono text-sm">{String(content)}</span>;
+  }
+
+  return (
+    <div className="space-y-2 font-mono">
+      {isExpanded ? (
+        <pre className="text-xs bg-background p-2 rounded-md overflow-x-auto w-full">
+          <code>{JSON.stringify(content, null, 2)}</code>
+        </pre>
+      ) : (
+        <div className="bg-muted p-2 rounded-md space-y-1 text-sm">
+          {Object.entries(content).map(([key, value]) => (
+            <div key={key} className="flex justify-between items-start gap-4">
+              <span className="font-semibold text-muted-foreground flex-shrink-0">{key}:</span>
+              {typeof value === 'number' ? (
+                <span className="font-bold text-accent text-right">{value.toLocaleString()}</span>
+              ) : (
+                <span className="text-right truncate">{String(value)}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      <Button
+        variant="link"
+        size="sm"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="p-0 h-auto text-accent hover:text-accent/80 flex items-center gap-1"
+      >
+        {isExpanded ? <MinusSquare className="size-3.5"/> : <PlusSquare className="size-3.5"/>}
+        {isExpanded ? 'View Formatted' : 'View Raw JSON'}
+      </Button>
+    </div>
+  );
+};
+
 
 export default function ExplorePage() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -97,8 +138,8 @@ export default function ExplorePage() {
                                 <TableRow key={record.record_id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
                                     <TableCell className="font-medium">{record.record_id}</TableCell>
                                     <TableCell>{record.job_id}</TableCell>
-                                    <TableCell>{record.timestamp}</TableCell>
-                                    <TableCell className="font-mono text-sm">{JSON.stringify(record.content)}</TableCell>
+                                    <TableCell>{new Date(record.timestamp).toLocaleString()}</TableCell>
+                                    <TableCell><JsonViewer content={record.content} /></TableCell>
                                 </TableRow>
                             )) : (
                               <TableRow>
