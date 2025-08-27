@@ -30,11 +30,11 @@ const recentJobs: { id: string; target: string; status: JobStatus; dataPoints: n
 const getStatusBadge = (status: JobStatus) => {
     switch (status) {
       case 'Completed':
-        return <Badge variant="outline" className="border-orange-500 text-orange-500">Completed</Badge>;
+        return <Badge variant="outline" className="border-primary text-primary">Completed</Badge>;
       case 'Running':
-        return <Badge variant="outline" className="border-teal-500 text-teal-500">Running</Badge>;
+        return <Badge variant="outline" className="border-secondary text-secondary">Running</Badge>;
       case 'Failed':
-        return <Badge variant="secondary">Failed</Badge>;
+        return <Badge variant="destructive">Failed</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -51,48 +51,48 @@ export default function DashboardPage() {
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="bg-slate-900">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-accent">+20.1% from last month</p>
+            <p className="text-xs text-muted-foreground">+20.1% from last month</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-teal-500">Currently running</p>
+            <p className="text-xs text-muted-foreground">Currently running</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Data Points Scraped</CardTitle>
             <DatabaseZap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1.4M</div>
-            <p className="text-xs text-accent">+180.1% from last month</p>
+            <p className="text-xs text-muted-foreground">+180.1% from last month</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">98.2%</div>
-            <p className="text-xs text-accent">+2.5% from last month</p>
+            <p className="text-xs text-muted-foreground">+2.5% from last month</p>
           </CardContent>
         </Card>
       </div>
-      <Card className="bg-slate-900">
+      <Card>
         <CardHeader>
             <CardTitle>Recent Jobs</CardTitle>
             <CardDescription>An overview of the most recent scraping jobs.</CardDescription>
@@ -100,7 +100,7 @@ export default function DashboardPage() {
         <CardContent>
             <Table>
                 <TableHeader>
-                    <TableRow className="hover:bg-slate-800">
+                    <TableRow>
                         <TableHead>Job ID</TableHead>
                         <TableHead>Target</TableHead>
                         <TableHead>Status</TableHead>
@@ -108,8 +108,8 @@ export default function DashboardPage() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {recentJobs.map((job, index) => (
-                        <TableRow key={job.id} className={index % 2 === 0 ? 'bg-slate-950 hover:bg-slate-800' : 'hover:bg-slate-800'}>
+                    {recentJobs.map((job) => (
+                        <TableRow key={job.id}>
                             <TableCell className="font-medium">{job.id}</TableCell>
                             <TableCell>{job.target}</TableCell>
                             <TableCell>{getStatusBadge(job.status)}</TableCell>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
             </Table>
         </CardContent>
       </Card>
-      <footer className="text-right text-sm text-gray-500 mt-4">
+      <footer className="text-right text-sm text-muted-foreground mt-4">
         Powered by Quantum Dashboard
       </footer>
     </div>

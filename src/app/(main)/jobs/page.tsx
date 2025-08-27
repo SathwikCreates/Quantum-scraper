@@ -49,13 +49,13 @@ const allJobs: Job[] = [
 const getStatusBadge = (status: Job['status']) => {
     switch (status) {
       case 'Completed':
-        return <Badge variant="outline" className="border-[hsl(var(--chart-1))] text-[hsl(var(--chart-1))]">Completed</Badge>;
+        return <Badge variant="outline" className="border-primary text-primary">Completed</Badge>;
       case 'Running':
-        return <Badge variant="default">Running</Badge>;
+        return <Badge variant="default" className="bg-secondary text-secondary-foreground">Running</Badge>;
       case 'Failed':
         return <Badge variant="destructive">Failed</Badge>;
       case 'Pending':
-        return <Badge variant="secondary">Pending</Badge>;
+        return <Badge variant="secondary" className="bg-muted text-muted-foreground">Pending</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }

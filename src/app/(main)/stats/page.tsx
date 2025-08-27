@@ -70,7 +70,7 @@ export default function StatisticsPage() {
                   cursor={false}
                   content={<ChartTooltipContent indicator="dot" />}
                 />
-                <Bar dataKey="count" fill="hsl(var(--accent))" radius={4} />
+                <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
               </BarChart>
             </ChartContainer>
           </CardContent>
