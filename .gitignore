@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+*.idx  # ⬅️ Added this line to ignore .idx files
 
 # debug
 npm-debug.log*
@@ -37,9 +38,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# genkit
 .genkit/*
-.env*
 
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# ENVIRONMENT
+# .env* is REMOVED so .env files are tracked
+
