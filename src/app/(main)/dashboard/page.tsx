@@ -29,9 +29,9 @@ const recentJobs: { id: string; target: string; status: JobStatus; dataPoints: n
 const getStatusBadge = (status: JobStatus) => {
     switch (status) {
       case 'Completed':
-        return <Badge variant="outline" className="border-accent text-accent">Completed</Badge>;
+        return <Badge variant="default" className="bg-accent text-accent-foreground">Completed</Badge>;
       case 'Running':
-        return <Badge variant="default" className="bg-accent text-accent-foreground">Running</Badge>;
+        return <Badge variant="default" className="bg-accent/80 text-accent-foreground">Running</Badge>;
       case 'Failed':
         return <Badge variant="destructive">Failed</Badge>;
       default:
@@ -43,67 +43,67 @@ const getStatusBadge = (status: JobStatus) => {
 export default function DashboardPage() {
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold tracking-tight text-center">Dashboard</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">Dashboard</h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-accent">Total Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium text-foreground">Total Jobs</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
+            <div className="text-2xl font-bold text-accent">1,234</div>
             <p className="text-xs text-muted-foreground">+20.1% from last month</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-accent">Active Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium text-foreground">Active Jobs</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold text-accent">12</div>
             <p className="text-xs text-muted-foreground">Currently running</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-accent">Data Points Scraped</CardTitle>
+            <CardTitle className="text-sm font-medium text-foreground">Data Points Scraped</CardTitle>
             <DatabaseZap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1.4M</div>
+            <div className="text-2xl font-bold text-accent">1.4M</div>
             <p className="text-xs text-muted-foreground">+180.1% from last month</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-accent">Success Rate</CardTitle>
+            <CardTitle className="text-sm font-medium text-foreground">Success Rate</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">98.2%</div>
+            <div className="text-2xl font-bold text-accent">98.2%</div>
             <p className="text-xs text-muted-foreground">+2.5% from last month</p>
           </CardContent>
         </Card>
       </div>
       <Card>
         <CardHeader>
-            <CardTitle>Recent Jobs</CardTitle>
-            <CardDescription className="text-accent">An overview of the most recent scraping jobs.</CardDescription>
+            <CardTitle className="text-foreground">Recent Jobs</CardTitle>
+            <CardDescription className="text-muted-foreground">An overview of the most recent scraping jobs.</CardDescription>
         </CardHeader>
         <CardContent>
             <Table>
                 <TableHeader>
-                    <TableRow className="hover:bg-card">
-                        <TableHead className="text-accent">Job ID</TableHead>
-                        <TableHead className="text-accent">Target</TableHead>
-                        <TableHead className="text-accent">Status</TableHead>
-                        <TableHead className="text-right text-accent">Data Points</TableHead>
+                    <TableRow className="hover:bg-card/60">
+                        <TableHead className="text-foreground">Job ID</TableHead>
+                        <TableHead className="text-foreground">Target</TableHead>
+                        <TableHead className="text-foreground">Status</TableHead>
+                        <TableHead className="text-right text-foreground">Data Points</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {recentJobs.map((job, index) => (
-                        <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background' : 'bg-card'}>
+                        <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
                             <TableCell className="font-medium">{job.id}</TableCell>
                             <TableCell>{job.target}</TableCell>
                             <TableCell>{getStatusBadge(job.status)}</TableCell>

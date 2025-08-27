@@ -36,31 +36,31 @@ body {
     --header-background: 217 33% 17%;
   }
   .dark {
-    --background: 0 0% 0%; /* #000000 */
-    --foreground: 276 83% 79%; /* #BC6FF1 */
-    --card: 279 92% 25%; /* #52057B */
-    --card-foreground: 276 83% 79%; /* #BC6FF1 */
-    --popover: 279 92% 25%; /* #52057B */
-    --popover-foreground: 276 83% 79%; /* #BC6FF1 */
-    --primary: 275 78% 54%; /* #892CDC */
-    --primary-foreground: 276 83% 79%; /* #BC6FF1 */
-    --secondary: 279 92% 25%; /* #52057B */
-    --secondary-foreground: 276 83% 79%; /* #BC6FF1 */
-    --muted: 279 92% 25%; /* #52057B */
-    --muted-foreground: 276 83% 79%; /* #BC6FF1 */
-    --accent: 275 78% 54%; /* #892CDC */
-    --accent-foreground: 276 83% 79%; /* #BC6FF1 */
+    --background: 215 13% 16%; /* #222831 */
+    --foreground: 0 0% 93%; /* #EEEEEE */
+    --card: 218 9% 25%; /* #393E46 */
+    --card-foreground: 0 0% 93%; /* #EEEEEE */
+    --popover: 218 9% 25%; /* #393E46 */
+    --popover-foreground: 0 0% 93%; /* #EEEEEE */
+    --primary: 183 100% 36%; /* #00ADB5 */
+    --primary-foreground: 0 0% 93%; /* #EEEEEE */
+    --secondary: 218 9% 25%; /* #393E46 */
+    --secondary-foreground: 0 0% 93%; /* #EEEEEE */
+    --muted: 218 9% 25%; /* #393E46 */
+    --muted-foreground: 183 100% 36%; /* #00ADB5 */
+    --accent: 183 100% 36%; /* #00ADB5 */
+    --accent-foreground: 0 0% 93%; /* #EEEEEE */
     --destructive: 0 63% 31%;
-    --destructive-foreground: 276 83% 79%;
-    --border: 279 92% 30%; /* slightly lighter purple for borders */
-    --input: 279 92% 25%; /* #52057B */
-    --ring: 275 78% 54%; /* #892CDC */
-    --chart-1: 275 78% 54%; /* #892CDC */
-    --chart-2: 276 83% 79%; /* #BC6FF1 */
-    --chart-3: 279 92% 25%;
-    --chart-4: 275 78% 65%;
-    --chart-5: 276 83% 90%;
-    --header-background: 279 92% 25%; /* #52057B */
+    --destructive-foreground: 0 0% 93%;
+    --border: 218 9% 30%;
+    --input: 218 9% 25%; /* #393E46 */
+    --ring: 183 100% 36%; /* #00ADB5 */
+    --chart-1: 183 100% 36%; /* #00ADB5 */
+    --chart-2: 0 0% 93%; /* #EEEEEE */
+    --chart-3: 218 9% 25%;
+    --chart-4: 183 100% 45%;
+    --chart-5: 0 0% 80%;
+    --header-background: 218 9% 25%; /* #393E46 */
   }
 }
 
@@ -72,3 +72,4 @@ body {
     @apply bg-background text-foreground;
   }
 }
+

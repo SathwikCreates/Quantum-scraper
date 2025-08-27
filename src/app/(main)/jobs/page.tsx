@@ -49,9 +49,9 @@ const allJobs: Job[] = [
 const getStatusBadge = (status: Job['status']) => {
     switch (status) {
       case 'Completed':
-        return <Badge variant="outline" className="border-accent text-accent">Completed</Badge>;
+        return <Badge variant="default" className="bg-accent text-accent-foreground">Completed</Badge>;
       case 'Running':
-        return <Badge variant="default" className="bg-accent text-accent-foreground">Running</Badge>;
+        return <Badge variant="default" className="bg-accent/80 text-accent-foreground">Running</Badge>;
       case 'Failed':
         return <Badge variant="destructive">Failed</Badge>;
       case 'Pending':
@@ -73,11 +73,11 @@ export default function JobsPage() {
 
     return (
         <div className="space-y-6 w-full max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold tracking-tight text-center">Jobs</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">Jobs</h1>
             <Card>
                 <CardHeader>
-                    <CardTitle>All Jobs</CardTitle>
-                    <CardDescription className="text-accent">Search, filter, and monitor all scraping jobs.</CardDescription>
+                    <CardTitle className="text-foreground">All Jobs</CardTitle>
+                    <CardDescription className="text-muted-foreground">Search, filter, and monitor all scraping jobs.</CardDescription>
                     <div className="mt-4 flex flex-col md:flex-row gap-2">
                         <Input
                             placeholder="Search by Job ID or Target..."
@@ -102,25 +102,25 @@ export default function JobsPage() {
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow className="hover:bg-card">
-                                <TableHead className="text-accent">Job ID</TableHead>
-                                <TableHead className="text-accent">Target</TableHead>
-                                <TableHead className="text-accent">Status</TableHead>
-                                <TableHead className="text-accent">Started At</TableHead>
-                                <TableHead className="text-accent">Progress</TableHead>
-                                <TableHead className="text-right text-accent">Data Points</TableHead>
+                            <TableRow className="hover:bg-card/60">
+                                <TableHead className="text-foreground">Job ID</TableHead>
+                                <TableHead className="text-foreground">Target</TableHead>
+                                <TableHead className="text-foreground">Status</TableHead>
+                                <TableHead className="text-foreground">Started At</TableHead>
+                                <TableHead className="text-foreground">Progress</TableHead>
+                                <TableHead className="text-right text-foreground">Data Points</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filteredJobs.length > 0 ? filteredJobs.map((job, index) => (
-                                <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background' : 'bg-card'}>
+                                <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
                                     <TableCell className="font-medium">{job.id}</TableCell>
                                     <TableCell className="truncate max-w-xs">{job.target}</TableCell>
                                     <TableCell>{getStatusBadge(job.status)}</TableCell>
                                     <TableCell>{job.startedAt}</TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <Progress value={job.progress} className="w-24" />
+                                            <Progress value={job.progress} className="w-24 bg-muted" />
                                             <span className="text-sm text-muted-foreground">{job.progress}%</span>
                                         </div>
                                     </TableCell>

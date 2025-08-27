@@ -24,6 +24,7 @@ const activityData = [
 const jobsChartConfig = {
   count: {
     label: "Jobs",
+    color: "hsl(var(--chart-1))",
   },
   status: {
     label: "Status"
@@ -47,17 +48,17 @@ const activityChartConfig = {
 export default function StatisticsPage() {
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold tracking-tight text-center">Statistics</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">Statistics</h1>
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Jobs Overview</CardTitle>
-            <CardDescription className="text-accent">A breakdown of all jobs by their current status.</CardDescription>
+            <CardTitle className="text-foreground">Jobs Overview</CardTitle>
+            <CardDescription className="text-muted-foreground">A breakdown of all jobs by their current status.</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={jobsChartConfig} className="h-[300px] w-full">
               <BarChart accessibilityLayer data={jobsData} margin={{ top: 20 }}>
-                <CartesianGrid vertical={false} stroke="hsl(var(--muted-foreground))" />
+                <CartesianGrid vertical={false} stroke="hsl(var(--secondary-background))" />
                 <XAxis
                   dataKey="status"
                   tickLine={false}
@@ -78,13 +79,13 @@ export default function StatisticsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Scraping Activity</CardTitle>
-            <CardDescription className="text-accent">Data points scraped over the last 7 days.</CardDescription>
+            <CardTitle className="text-foreground">Scraping Activity</CardTitle>
+            <CardDescription className="text-muted-foreground">Data points scraped over the last 7 days.</CardDescription>
           </CardHeader>
           <CardContent>
              <ChartContainer config={activityChartConfig} className="h-[300px] w-full">
               <LineChart accessibilityLayer data={activityData} margin={{ top: 20 }}>
-                <CartesianGrid vertical={false} stroke="hsl(var(--muted-foreground))" />
+                <CartesianGrid vertical={false} stroke="hsl(var(--secondary-background))" />
                 <XAxis
                   dataKey="date"
                   tickLine={false}
