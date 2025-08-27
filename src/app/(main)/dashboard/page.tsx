@@ -19,7 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Activity, CheckCircle, DatabaseZap } from "lucide-react";
 
-type JobStatus = 'Completed' | 'Running' | 'Failed';
+type JobStatus = 'Completed' | 'Running' | 'Failed' | 'Queued';
 
 type RecentJob = {
   id: string;
@@ -146,7 +146,7 @@ export default function DashboardPage() {
                 </TableHeader>
                 <TableBody>
                     {data.recentJobs.map((job, index) => (
-                        <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
+                        <TableRow key={`${job.id}-${index}`} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
                             <TableCell className="font-medium">{job.id}</TableCell>
                             <TableCell>{job.target}</TableCell>
                             <TableCell>{getStatusBadge(job.status)}</TableCell>

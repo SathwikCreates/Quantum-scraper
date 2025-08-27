@@ -11,26 +11,46 @@ function getRandomFloat(min: number, max: number, decimals: number) {
     return parseFloat(str);
 }
 
-const dashboardData = () => ({
-    stats: {
-        totalJobs: getRandomInt(1200, 1300).toLocaleString(),
-        totalJobsChange: `+${getRandomFloat(2, 3, 1)}% today`,
-        activeJobs: getRandomInt(10, 15).toLocaleString(),
-        activeJobsChange: 'Currently running',
-        dataPoints: `${getRandomInt(130, 150)}s`, // Representing avg wait time
-        dataPointsChange: `+${getRandomFloat(1, 5, 1)}s from last hour`,
-        successRate: `${getRandomFloat(98, 99, 1)}%`,
-        successRateChange: `+${getRandomFloat(0.1, 0.3, 1)}% from last month`,
-    },
-    recentJobs: [
-        { id: `JOB-${getRandomInt(3000, 3100)}`, target: 'ibm_oslo', status: 'Completed', dataPoints: getRandomInt(1000, 1500) },
-        { id: `JOB-${getRandomInt(2990, 3000)}`, target: 'ibm_lima', status: 'Running', dataPoints: getRandomInt(400, 500) },
-        { id: `JOB-${getRandomInt(2980, 2990)}`, target: 'ibmq_qasm_simulator', status: 'Failed', dataPoints: 0 },
-        { id: `JOB-${getRandomInt(2970, 2980)}`, target: 'ibm_lima', status: 'Completed', dataPoints: getRandomInt(8000, 9000) },
-        { id: `JOB-${getRandomInt(2960, 2970)}`, target: 'ibm_oslo', status: 'Queued', dataPoints: getRandomInt(2000, 2500) },
-    ],
-    lastUpdated: new Date().toISOString(),
-});
+const dashboardData = () => {
+    // Helper to avoid duplicate job IDs for recent jobs
+    const generateRecentJobs = () => {
+        const jobs = [];
+        const jobIds = new Set();
+        const statuses: ('Completed' | 'Running' | 'Failed' | 'Queued')[] = ['Completed', 'Running', 'Failed', 'Completed', 'Queued'];
+        const targets = ['ibm_oslo', 'ibm_lima', 'ibmq_qasm_simulator', 'ibm_lima', 'ibm_oslo'];
+
+        for (let i = 0; i < 5; i++) {
+            let jobId;
+            do {
+                jobId = `JOB-${getRandomInt(2960, 3100)}`;
+            } while (jobIds.has(jobId));
+            jobIds.add(jobId);
+
+            jobs.push({
+                id: jobId,
+                target: targets[i],
+                status: statuses[i],
+                dataPoints: statuses[i] === 'Failed' ? 0 : getRandomInt(400, 9000)
+            });
+        }
+        return jobs;
+    };
+
+    return {
+        stats: {
+            totalJobs: getRandomInt(1200, 1300).toLocaleString(),
+            totalJobsChange: `+${getRandomFloat(2, 3, 1)}% today`,
+            activeJobs: getRandomInt(10, 15).toLocaleString(),
+            activeJobsChange: 'Currently running',
+            dataPoints: `${getRandomInt(130, 150)}s`, // Representing avg wait time
+            dataPointsChange: `+${getRandomFloat(1, 5, 1)}s from last hour`,
+            successRate: `${getRandomFloat(98, 99, 1)}%`,
+            successRateChange: `+${getRandomFloat(0.1, 0.3, 1)}% from last month`,
+        },
+        recentJobs: generateRecentJobs(),
+        lastUpdated: new Date().toISOString(),
+    };
+};
 
 const jobsData = () => {
     const backends = ['ibm_q_16_melbourne', 'ibmq_armonk', 'ibmq_santiago', 'ibmq_bogota', 'ibmq_lima', 'ibmq_belem', 'ibmq_quito', 'ibmq_qasm_simulator', 'ibm_oslo'];
