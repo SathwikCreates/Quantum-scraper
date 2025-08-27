@@ -29,9 +29,9 @@ const recentJobs: { id: string; target: string; status: JobStatus; dataPoints: n
 const getStatusBadge = (status: JobStatus) => {
     switch (status) {
       case 'Completed':
-        return <Badge variant="outline" className="border-primary text-primary">Completed</Badge>;
+        return <Badge variant="outline" className="border-accent text-accent">Completed</Badge>;
       case 'Running':
-        return <Badge variant="outline" className="border-secondary text-secondary">Running</Badge>;
+        return <Badge variant="default" className="bg-accent text-accent-foreground">Running</Badge>;
       case 'Failed':
         return <Badge variant="destructive">Failed</Badge>;
       default:
@@ -47,7 +47,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium text-accent">Total Jobs</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -57,7 +57,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium text-accent">Active Jobs</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -67,7 +67,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Data Points Scraped</CardTitle>
+            <CardTitle className="text-sm font-medium text-accent">Data Points Scraped</CardTitle>
             <DatabaseZap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+            <CardTitle className="text-sm font-medium text-accent">Success Rate</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -89,21 +89,21 @@ export default function DashboardPage() {
       <Card>
         <CardHeader>
             <CardTitle>Recent Jobs</CardTitle>
-            <CardDescription>An overview of the most recent scraping jobs.</CardDescription>
+            <CardDescription className="text-accent">An overview of the most recent scraping jobs.</CardDescription>
         </CardHeader>
         <CardContent>
             <Table>
                 <TableHeader>
-                    <TableRow>
-                        <TableHead>Job ID</TableHead>
-                        <TableHead>Target</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Data Points</TableHead>
+                    <TableRow className="hover:bg-card">
+                        <TableHead className="text-accent">Job ID</TableHead>
+                        <TableHead className="text-accent">Target</TableHead>
+                        <TableHead className="text-accent">Status</TableHead>
+                        <TableHead className="text-right text-accent">Data Points</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {recentJobs.map((job) => (
-                        <TableRow key={job.id}>
+                    {recentJobs.map((job, index) => (
+                        <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background' : 'bg-card'}>
                             <TableCell className="font-medium">{job.id}</TableCell>
                             <TableCell>{job.target}</TableCell>
                             <TableCell>{getStatusBadge(job.status)}</TableCell>

@@ -51,7 +51,7 @@ export default function ExplorePage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Scraped Data Records</CardTitle>
-                    <CardDescription>Search and explore the data collected from all jobs.</CardDescription>
+                    <CardDescription className="text-accent">Search and explore the data collected from all jobs.</CardDescription>
                     <div className="mt-4 flex gap-2">
                         <Input
                             placeholder="Search by Record ID, Job ID, or content..."
@@ -68,16 +68,16 @@ export default function ExplorePage() {
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead>Record ID</TableHead>
-                                <TableHead>Source Job</TableHead>
-                                <TableHead>Timestamp</TableHead>
-                                <TableHead>Content</TableHead>
+                            <TableRow className="hover:bg-card">
+                                <TableHead className="text-accent">Record ID</TableHead>
+                                <TableHead className="text-accent">Source Job</TableHead>
+                                <TableHead className="text-accent">Timestamp</TableHead>
+                                <TableHead className="text-accent">Content</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredData.length > 0 ? filteredData.map((record) => (
-                                <TableRow key={record.id}>
+                            {filteredData.length > 0 ? filteredData.map((record, index) => (
+                                <TableRow key={record.id} className={index % 2 === 0 ? 'bg-background' : 'bg-card'}>
                                     <TableCell className="font-medium">{record.id}</TableCell>
                                     <TableCell>{record.sourceJob}</TableCell>
                                     <TableCell>{record.timestamp}</TableCell>

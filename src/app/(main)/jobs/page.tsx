@@ -49,9 +49,9 @@ const allJobs: Job[] = [
 const getStatusBadge = (status: Job['status']) => {
     switch (status) {
       case 'Completed':
-        return <Badge variant="outline" className="border-primary text-primary">Completed</Badge>;
+        return <Badge variant="outline" className="border-accent text-accent">Completed</Badge>;
       case 'Running':
-        return <Badge variant="default" className="bg-secondary text-secondary-foreground">Running</Badge>;
+        return <Badge variant="default" className="bg-accent text-accent-foreground">Running</Badge>;
       case 'Failed':
         return <Badge variant="destructive">Failed</Badge>;
       case 'Pending':
@@ -77,7 +77,7 @@ export default function JobsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>All Jobs</CardTitle>
-                    <CardDescription>Search, filter, and monitor all scraping jobs.</CardDescription>
+                    <CardDescription className="text-accent">Search, filter, and monitor all scraping jobs.</CardDescription>
                     <div className="mt-4 flex flex-col md:flex-row gap-2">
                         <Input
                             placeholder="Search by Job ID or Target..."
@@ -102,18 +102,18 @@ export default function JobsPage() {
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead>Job ID</TableHead>
-                                <TableHead>Target</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Started At</TableHead>
-                                <TableHead>Progress</TableHead>
-                                <TableHead className="text-right">Data Points</TableHead>
+                            <TableRow className="hover:bg-card">
+                                <TableHead className="text-accent">Job ID</TableHead>
+                                <TableHead className="text-accent">Target</TableHead>
+                                <TableHead className="text-accent">Status</TableHead>
+                                <TableHead className="text-accent">Started At</TableHead>
+                                <TableHead className="text-accent">Progress</TableHead>
+                                <TableHead className="text-right text-accent">Data Points</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredJobs.length > 0 ? filteredJobs.map((job) => (
-                                <TableRow key={job.id}>
+                            {filteredJobs.length > 0 ? filteredJobs.map((job, index) => (
+                                <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background' : 'bg-card'}>
                                     <TableCell className="font-medium">{job.id}</TableCell>
                                     <TableCell className="truncate max-w-xs">{job.target}</TableCell>
                                     <TableCell>{getStatusBadge(job.status)}</TableCell>

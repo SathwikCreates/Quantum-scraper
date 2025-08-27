@@ -52,12 +52,12 @@ export default function StatisticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Jobs Overview</CardTitle>
-            <CardDescription>A breakdown of all jobs by their current status.</CardDescription>
+            <CardDescription className="text-accent">A breakdown of all jobs by their current status.</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={jobsChartConfig} className="h-[300px] w-full">
               <BarChart accessibilityLayer data={jobsData} margin={{ top: 20 }}>
-                <CartesianGrid vertical={false} />
+                <CartesianGrid vertical={false} stroke="hsl(var(--muted-foreground))" />
                 <XAxis
                   dataKey="status"
                   tickLine={false}
@@ -70,7 +70,7 @@ export default function StatisticsPage() {
                   cursor={false}
                   content={<ChartTooltipContent indicator="dot" />}
                 />
-                <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                <Bar dataKey="count" fill="hsl(var(--accent))" radius={4} />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -79,12 +79,12 @@ export default function StatisticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>Scraping Activity</CardTitle>
-            <CardDescription>Data points scraped over the last 7 days.</CardDescription>
+            <CardDescription className="text-accent">Data points scraped over the last 7 days.</CardDescription>
           </CardHeader>
           <CardContent>
              <ChartContainer config={activityChartConfig} className="h-[300px] w-full">
               <LineChart accessibilityLayer data={activityData} margin={{ top: 20 }}>
-                <CartesianGrid vertical={false} />
+                <CartesianGrid vertical={false} stroke="hsl(var(--muted-foreground))" />
                 <XAxis
                   dataKey="date"
                   tickLine={false}

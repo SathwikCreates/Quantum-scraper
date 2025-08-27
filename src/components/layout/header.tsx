@@ -19,7 +19,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full bg-header-background py-4">
       <div className="container flex flex-col items-center justify-center px-4 md:px-6">
         <Link href="/" className="mb-2">
-          <h1 className="text-3xl font-bold text-primary">
+          <h1 className="text-3xl font-bold text-accent">
             Quantum Dashboard
           </h1>
         </Link>
@@ -29,7 +29,7 @@ export function Header() {
               key={link.href}
               href={link.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary hover:underline underline-offset-4",
+                "text-sm font-medium transition-colors hover:text-accent hover:underline underline-offset-4",
                 pathname === link.href
                   ? "text-foreground"
                   : "text-muted-foreground"

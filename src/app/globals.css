@@ -36,31 +36,31 @@ body {
     --header-background: 217 33% 17%;
   }
   .dark {
-    --background: 0 0% 0%; /* black */
-    --foreground: 0 0% 98%; /* white */
-    --card: 217 33% 17%; /* navy blue */
-    --card-foreground: 0 0% 98%; /* white */
-    --popover: 217 33% 17%; /* navy blue */
-    --popover-foreground: 0 0% 98%; /* white */
-    --primary: 16 100% 62%; /* deep orange */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 176 56% 51%; /* teal */
-    --secondary-foreground: 0 0% 0%;
-    --muted: 217 33% 27%;
-    --muted-foreground: 0 0% 63%;
-    --accent: 282 44% 53%; /* magenta */
-    --accent-foreground: 0 0% 98%;
+    --background: 218 17% 16%; /* #222831 */
+    --foreground: 38 41% 80%;   /* #DFD0B8 */
+    --card: 220 10% 25%;         /* #393E46 */
+    --card-foreground: 38 41% 80%; /* #DFD0B8 */
+    --popover: 220 10% 25%;      /* #393E46 */
+    --popover-foreground: 38 41% 80%; /* #DFD0B8 */
+    --primary: 44 10% 53%;       /* #948979 */
+    --primary-foreground: 38 41% 80%; /* #DFD0B8 */
+    --secondary: 220 10% 25%;    /* #393E46 */
+    --secondary-foreground: 38 41% 80%; /* #DFD0B8 */
+    --muted: 220 10% 25%;         /* #393E46 */
+    --muted-foreground: 44 10% 53%; /* #948979 */
+    --accent: 44 10% 53%;        /* #948979 */
+    --accent-foreground: 38 41% 80%; /* #DFD0B8 */
     --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 217 33% 27%;
-    --input: 217 33% 27%;
-    --ring: 16 100% 62%; /* deep orange */
-    --chart-1: 176 56% 51%; /* teal */
-    --chart-2: 282 44% 53%; /* magenta */
-    --chart-3: 16 93% 59%; /* deep orange */
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --header-background: 210 29% 25%; /* dark slate gray */
+    --destructive-foreground: 38 41% 80%;
+    --border: 220 10% 30%;
+    --input: 220 10% 25%;
+    --ring: 44 10% 53%;
+    --chart-1: 44 10% 53%;       /* #948979 */
+    --chart-2: 38 41% 70%;       /* Lighter beige for contrast */
+    --chart-3: 220 10% 40%;
+    --chart-4: 44 10% 65%;
+    --chart-5: 38 41% 90%;
+    --header-background: 220 10% 25%; /* #393E46 */
   }
 }
 
