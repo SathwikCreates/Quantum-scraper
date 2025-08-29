@@ -12,19 +12,18 @@ function getRandomFloat(min: number, max: number, decimals: number) {
     return parseFloat(str);
 }
 
-const backends = {
-    'ibm_q_16_melbourne': { coords: [144.9631, -37.8136] }, // Melbourne, Australia
-    'ibmq_armonk': { coords: [-73.749, 41.117] },       // Armonk, NY, USA
-    'ibmq_santiago': { coords: [-70.6693, -33.4489] },    // Santiago, Chile
-    'ibmq_bogota': { coords: [-74.0721, 4.7110] },       // Bogota, Colombia
-    'ibmq_lima': { coords: [-77.0428, -12.0464] },      // Lima, Peru
-    'ibmq_belem': { coords: [-48.504, -1.455] },        // Belem, Brazil
-    'ibmq_quito': { coords: [-78.4678, -0.1807] },      // Quito, Ecuador
-    'ibmq_qasm_simulator': { coords: [-73.749, 41.117] },// Simulated, placed in Armonk
-    'ibm_oslo': { coords: [10.7522, 59.9139] },       // Oslo, Norway
-};
+const backendNames = [
+    'ibm_q_16_melbourne',
+    'ibmq_armonk',
+    'ibmq_santiago',
+    'ibmq_bogota',
+    'ibmq_lima',
+    'ibmq_belem',
+    'ibmq_quito',
+    'ibmq_qasm_simulator',
+    'ibm_oslo',
+];
 
-const backendNames = Object.keys(backends);
 const jobIds = new Set<string>();
 
 const generateJob = (status: 'Queued' | 'Running' | 'Completed' | 'Failed', backendName?: string): any => {
@@ -223,34 +222,6 @@ const recordsData = () => {
     return records;
 };
 
-const mapData = () => {
-    const runningJobs = Array.from({ length: getRandomInt(5, 10) }, () => generateJob('Running'));
-    const allJobs = [
-        ...runningJobs,
-        ...Array.from({ length: getRandomInt(20, 30) }, () => generateJob('Queued')),
-    ];
-
-    const backendSummary = backendNames.map(name => {
-        return {
-            name: name,
-            coordinates: backends[name as keyof typeof backends].coords,
-            runningJobs: allJobs.filter(j => j.backend === name && j.status === 'Running').length,
-            queuedJobs: allJobs.filter(j => j.backend === name && j.status === 'Queued').length,
-        };
-    });
-
-    const runningJobArcs = runningJobs.map(job => ({
-        id: job.id,
-        backend: job.backend,
-        backendCoords: backends[job.backend as keyof typeof backends].coords,
-    }));
-
-    return {
-        backends: backendSummary,
-        runningJobs: runningJobArcs,
-    };
-};
-
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
@@ -268,9 +239,6 @@ export async function GET(request: Request) {
             break;
         case 'records':
             data = recordsData();
-            break;
-        case 'map':
-            data = mapData();
             break;
         default:
             return NextResponse.json({ error: 'Invalid data type requested' }, { status: 400 });
