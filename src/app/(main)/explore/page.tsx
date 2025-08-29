@@ -135,7 +135,7 @@ export default function ExplorePage() {
                         </TableHeader>
                         <TableBody>
                             {filteredData.length > 0 ? filteredData.map((record, index) => (
-                                <TableRow key={record.record_id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
+                                <TableRow key={`${record.record_id}-${index}`} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
                                     <TableCell className="font-medium">{record.record_id}</TableCell>
                                     <TableCell>{record.job_id}</TableCell>
                                     <TableCell>{new Date(record.timestamp).toLocaleString()}</TableCell>

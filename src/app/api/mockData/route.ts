@@ -125,12 +125,25 @@ const statsData = () => ({
 });
 
 const recordsData = () => {
-    return Array.from({ length: 15 }, () => ({
-        record_id: `REC-${getRandomInt(1000, 9999)}`,
-        job_id: `JOB-${getRandomInt(2000, 3000)}`,
-        timestamp: new Date(Date.now() - getRandomInt(1000, 7200000)).toISOString(),
-        content: { data: "...", value: getRandomFloat(1, 1000, 2) }
-    }));
+    const records = [];
+    const recordIds = new Set();
+    const totalRecords = 15;
+
+    for (let i = 0; i < totalRecords; i++) {
+        let recordId;
+        do {
+            recordId = `REC-${getRandomInt(1000, 9999)}`;
+        } while (recordIds.has(recordId));
+        recordIds.add(recordId);
+
+        records.push({
+            record_id: recordId,
+            job_id: `JOB-${getRandomInt(2000, 3000)}`,
+            timestamp: new Date(Date.now() - getRandomInt(1000, 7200000)).toISOString(),
+            content: { data: "...", value: getRandomFloat(1, 1000, 2) }
+        });
+    }
+    return records;
 };
 
 export async function GET(request: Request) {
