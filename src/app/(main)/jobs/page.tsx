@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -26,8 +27,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { AlertTriangle } from "lucide-react";
 
 type JobStatus = 'Completed' | 'Running' | 'Failed' | 'Queued';
+type FailureRisk = 'Low' | 'Medium' | 'High' | null;
 
 type Job = {
   id: string;
@@ -38,6 +42,8 @@ type Job = {
   runtime_seconds: number | null;
   predicted_runtime_seconds: number | null;
   estimated_completion_time: string | null;
+  failure_risk: FailureRisk;
+  failure_reason: string | null;
 };
 
 type JobsData = {
@@ -81,6 +87,48 @@ const getStatusBadge = (status: JobStatus) => {
         return <Badge variant="outline">{status}</Badge>;
     }
 };
+
+const getFailureRiskBadge = (risk: FailureRisk, reason: string | null) => {
+    if (!risk) return <span className="text-muted-foreground">N/A</span>;
+    
+    const baseClasses = "flex items-center gap-1";
+    let badge;
+
+    switch (risk) {
+        case 'Low':
+            badge = <Badge variant="default" className="bg-green-500/30 text-green-300 border-green-500/50">{risk}</Badge>;
+            break;
+        case 'Medium':
+            badge = <Badge variant="default" className="bg-yellow-500/30 text-yellow-300 border-yellow-500/50">{risk}</Badge>;
+            break;
+        case 'High':
+            badge = <Badge variant="destructive" className="bg-red-500/30 text-red-300 border-red-500/50">{risk}</Badge>;
+            break;
+        default:
+            return <span className="text-muted-foreground">N/A</span>;
+    }
+
+    if ((risk === 'Medium' || risk === 'High') && reason) {
+        return (
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger className="cursor-help">
+                        <div className={baseClasses}>
+                            {badge}
+                            <AlertTriangle className="size-3.5 text-yellow-400" />
+                        </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{reason}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        );
+    }
+    
+    return <div className={baseClasses}>{badge}</div>;
+};
+
 
 export default function JobsPage() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -211,6 +259,7 @@ export default function JobsPage() {
                                 <TableHead className="text-foreground">Job ID</TableHead>
                                 <TableHead className="text-foreground">Backend</TableHead>
                                 <TableHead className="text-foreground">Status</TableHead>
+                                <TableHead className="text-foreground">Failure Risk</TableHead>
                                 <TableHead className="text-foreground">Submitted Time</TableHead>
                                 <TableHead className="text-foreground">Queue Position</TableHead>
                                 <TableHead className="text-foreground">Runtime (Predicted)</TableHead>
@@ -223,6 +272,7 @@ export default function JobsPage() {
                                     <TableCell className="font-medium">{job.id}</TableCell>
                                     <TableCell className="truncate max-w-xs">{job.backend}</TableCell>
                                     <TableCell>{getStatusBadge(job.status)}</TableCell>
+                                    <TableCell>{getFailureRiskBadge(job.failure_risk, job.failure_reason)}</TableCell>
                                     <TableCell>{new Date(job.submitted_at).toLocaleString()}</TableCell>
                                     <TableCell>
                                         {job.queue_position !== null ? job.queue_position : 'N/A'}
@@ -234,7 +284,7 @@ export default function JobsPage() {
                                 </TableRow>
                             )) : (
                               <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center text-foreground">
+                                <TableCell colSpan={8} className="h-24 text-center text-foreground">
                                   No results found.
                                 </TableCell>
                               </TableRow>

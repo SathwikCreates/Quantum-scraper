@@ -197,8 +197,8 @@ export function QuantumOrb({ backend, jobs, predictions }: QuantumOrbProps) {
             <div className="space-y-1 p-1 text-foreground">
                 <h4 className="font-bold text-primary">{backend} - Forecast</h4>
                 <p>Predicted Load: <span className="font-semibold" style={{ color: healthColor }}>{predictions.predicted_load.toUpperCase()}</span></p>
+                <p>Reliability Score: <span className="font-semibold">{(predictions.predicted_success_rate * 100).toFixed(1)}%</span></p>
                 <p>Est. Wait Time: <span className="font-semibold">{predictions.predicted_avg_wait_seconds}s</span></p>
-                <p>Est. Success Rate: <span className="font-semibold">{(predictions.predicted_success_rate * 100).toFixed(1)}%</span></p>
             </div>
         </TooltipContent>
       </Tooltip>

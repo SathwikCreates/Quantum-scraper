@@ -32,7 +32,24 @@ const generateJob = (status: 'Queued' | 'Running' | 'Completed' | 'Failed', back
         runtime_seconds: null,
         predicted_runtime_seconds: null,
         estimated_completion_time: null,
+        failure_risk: null,
+        failure_reason: null,
     }
+
+    if (status === 'Queued' || status === 'Running') {
+        const riskRoll = Math.random();
+        if (riskRoll > 0.9) {
+            job.failure_risk = 'High';
+            job.failure_reason = 'High contention on this backend recently.';
+        } else if (riskRoll > 0.7) {
+            job.failure_risk = 'Medium';
+            job.failure_reason = 'Slight increase in backend error rates.';
+        } else {
+            job.failure_risk = 'Low';
+        }
+    }
+
+
     if (status === 'Queued') {
         job.queue_position = getRandomInt(1, 50);
         const predicted_runtime_seconds = getRandomInt(180, 700);
