@@ -15,7 +15,7 @@ function getRandomFloat(min: number, max: number, decimals: number) {
 const backends = ['ibm_q_16_melbourne', 'ibmq_armonk', 'ibmq_santiago', 'ibmq_bogota', 'ibmq_lima', 'ibmq_belem', 'ibmq_quito', 'ibmq_qasm_simulator', 'ibm_oslo'];
 const jobIds = new Set<string>();
 
-const generateJob = (status: 'Queued' | 'Running' | 'Completed' | 'Failed'): any => {
+const generateJob = (status: 'Queued' | 'Running' | 'Completed' | 'Failed', backend?: string): any => {
     const submittedAt = new Date(Date.now() - getRandomInt(1000, 86400000));
     let jobId;
     do {
@@ -25,7 +25,7 @@ const generateJob = (status: 'Queued' | 'Running' | 'Completed' | 'Failed'): any
 
     const job: any = {
         id: jobId,
-        backend: backends[getRandomInt(0, backends.length - 1)],
+        backend: backend || backends[getRandomInt(0, backends.length - 1)],
         status: status,
         submitted_at: submittedAt.toISOString(),
         queue_position: null,
@@ -101,14 +101,41 @@ const jobsData = () => {
 
 const statsData = () => {
     jobIds.clear();
-    const queuedJobs = Array.from({ length: getRandomInt(10, 15) }, () => generateJob('Queued'));
-    const runningJobs = Array.from({ length: getRandomInt(3, 5) }, () => generateJob('Running'));
-    const completedJobs = Array.from({ length: getRandomInt(10, 15) }, () => generateJob('Completed'));
-    const failedJobs = Array.from({ length: getRandomInt(0, 2) }, () => generateJob('Failed'));
+
+    const backendDetails = backends.map(backend => {
+        const queuedCount = getRandomInt(0, 20);
+        const runningCount = getRandomInt(0, 5);
+        const completedCount = getRandomInt(10, 30);
+        const failedCount = getRandomInt(0, 2);
+
+        let predicted_load: 'low' | 'medium' | 'high' = 'low';
+        if (queuedCount > 15 || failedCount > 1) {
+            predicted_load = 'high';
+        } else if (queuedCount > 5) {
+            predicted_load = 'medium';
+        }
+
+        return {
+            name: backend,
+            jobs: [
+                ...Array.from({ length: queuedCount }, () => generateJob('Queued', backend)),
+                ...Array.from({ length: runningCount }, () => generateJob('Running', backend)),
+                ...Array.from({ length: completedCount }, () => generateJob('Completed', backend)),
+                ...Array.from({ length: failedCount }, () => generateJob('Failed', backend)),
+            ],
+            predictions: {
+                predicted_load,
+                predicted_avg_wait_seconds: queuedCount * getRandomInt(5, 15),
+                predicted_success_rate: 1 - (failedCount / (completedCount + failedCount + 1)),
+            }
+        };
+    });
+
+    const allJobs = backendDetails.flatMap(b => b.jobs);
     
     return {
         total_jobs: getRandomInt(1200, 1300),
-        running_jobs: runningJobs.length,
+        running_jobs: allJobs.filter(j => j.status === 'Running').length,
         avg_wait_seconds: getRandomInt(120, 180),
         success_rate: getRandomFloat(0.97, 0.99, 3),
         trends: [
@@ -135,12 +162,7 @@ const statsData = () => {
         busiest_backend: "ibmq_qasm_simulator",
         fastest_backend: "ibmq_qasm_simulator",
         last_updated: new Date().toISOString(),
-        jobs: {
-            queued: queuedJobs,
-            running: runningJobs,
-            completed: completedJobs,
-            failed: failedJobs
-        }
+        backends: backendDetails
     }
 };
 

@@ -19,7 +19,7 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { QuantumOrb, Job as QuantumOrbJob } from '@/components/quantum-orb';
+import { QuantumOrb, Job as QuantumOrbJob, Predictions } from '@/components/quantum-orb';
 
 ChartJS.register(
   CategoryScale,
@@ -34,6 +34,12 @@ ChartJS.register(
   TimeScale
 );
 
+type BackendDetail = {
+  name: string;
+  jobs: QuantumOrbJob[];
+  predictions: Predictions;
+}
+
 type StatsData = {
     avg_wait_seconds: number;
     trends: { time: string; avg_wait_seconds: number }[];
@@ -41,12 +47,7 @@ type StatsData = {
     running_vs_completed: { time: string; running: number; completed: number }[];
     busiest_backend: string;
     fastest_backend: string;
-    jobs: {
-      queued: QuantumOrbJob[];
-      running: QuantumOrbJob[];
-      completed: QuantumOrbJob[];
-      failed: QuantumOrbJob[];
-    }
+    backends: BackendDetail[];
 };
 
 export default function StatisticsPage() {
@@ -149,15 +150,6 @@ export default function StatisticsPage() {
     };
     const stackedBarOptions = { ...chartOptions, scales: { ...chartOptions.scales, x: { ...chartOptions.scales?.x, stacked: true }, y: { ...chartOptions.scales?.y, stacked: true } }};
 
-    const allJobs = [...statsData.jobs.queued, ...statsData.jobs.running, ...statsData.jobs.completed, ...(statsData.jobs.failed || [])];
-    const jobsByBackend: Record<string, QuantumOrbJob[]> = allJobs.reduce((acc, job) => {
-        if (!acc[job.backend]) {
-            acc[job.backend] = [];
-        }
-        acc[job.backend].push(job);
-        return acc;
-    }, {} as Record<string, QuantumOrbJob[]>);
-
 
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
@@ -172,8 +164,8 @@ export default function StatisticsPage() {
                 <CardDescription className="text-muted-foreground">A galactic view of your quantum backends. Each orb is a backend, and orbiting dots are queued jobs.</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-20 gap-x-8 p-6 place-items-center min-h-[300px]">
-                {Object.entries(jobsByBackend).map(([backend, jobs]) => (
-                    <QuantumOrb key={backend} backend={backend} jobs={jobs} />
+                {statsData.backends.map((backend) => (
+                    <QuantumOrb key={backend.name} backend={backend.name} jobs={backend.jobs} predictions={backend.predictions} />
                 ))}
             </CardContent>
         </Card>

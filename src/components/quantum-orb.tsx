@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useMemo } from "react";
 import { HeartPulse } from "lucide-react";
 import { JobProgressRing } from "./job-progress-ring";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 export type Job = {
   id: string;
@@ -13,18 +15,23 @@ export type Job = {
   predicted_runtime_seconds: number | null;
 };
 
+export type Predictions = {
+    predicted_load: 'low' | 'medium' | 'high';
+    predicted_avg_wait_seconds: number;
+    predicted_success_rate: number;
+};
+
 type QuantumOrbProps = {
   backend: string;
   jobs: Job[];
+  predictions: Predictions;
 };
 
-type HealthStatus = 'healthy' | 'moderate' | 'unstable';
-
-const HeartbeatWaveform = ({ status }: { status: HealthStatus }) => {
-    const colorMap: Record<HealthStatus, string> = {
-        healthy: 'hsl(var(--chart-1))',
-        moderate: 'hsl(var(--primary))',
-        unstable: 'hsl(var(--destructive))',
+const HeartbeatWaveform = ({ status }: { status: 'low' | 'medium' | 'high' }) => {
+    const colorMap = {
+        low: 'hsl(var(--chart-1))',
+        medium: 'hsl(var(--primary))',
+        high: 'hsl(var(--destructive))',
     };
     const color = colorMap[status];
 
@@ -63,23 +70,14 @@ const HeartbeatWaveform = ({ status }: { status: HealthStatus }) => {
 };
 
 
-export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
+export function QuantumOrb({ backend, jobs, predictions }: QuantumOrbProps) {
   const [completedJobIds, setCompletedJobIds] = useState<Set<string>>(new Set());
   const [pulse, setPulse] = useState(false);
 
-  const { queuedJobs, runningJobs, runningJobsCount, health } = useMemo(() => {
+  const { queuedJobs, runningJobs, runningJobsCount } = useMemo(() => {
     const queuedJobs = jobs.filter(j => j.status === 'Queued');
     const runningJobs = jobs.filter(j => j.status === 'Running');
-    const failedJobsCount = jobs.filter(j => j.status === 'Failed').length;
-
-    let currentHealth: HealthStatus = 'healthy';
-    if (failedJobsCount > 0 || queuedJobs.length > 15) {
-        currentHealth = 'unstable';
-    } else if (queuedJobs.length > 5) {
-        currentHealth = 'moderate';
-    }
-
-    return { queuedJobs, runningJobs, runningJobsCount: runningJobs.length, health: currentHealth };
+    return { queuedJobs, runningJobs, runningJobsCount: runningJobs.length };
   }, [jobs]);
 
   useEffect(() => {
@@ -102,12 +100,12 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
   const jobSize = 18; // Increased to accommodate the ring
   const radius = orbSize / 2 + jobSize * 1.5;
 
-  const healthConfig: Record<HealthStatus, { color: string; duration: number }> = {
-    healthy: { color: 'hsl(var(--chart-1))', duration: 4 }, // Greenish-Teal, slow pulse
-    moderate: { color: 'hsl(var(--primary))', duration: 2 }, // Orange, medium pulse
-    unstable: { color: 'hsl(var(--destructive))', duration: 0.8 }, // Red, fast pulse
+  const healthConfig = {
+    low: { color: 'hsl(var(--chart-1))', duration: 4 }, // Greenish-Teal, slow pulse
+    medium: { color: 'hsl(var(--primary))', duration: 2 }, // Orange, medium pulse
+    high: { color: 'hsl(var(--destructive))', duration: 0.8 }, // Red, fast pulse
   }
-  const { color: healthColor, duration: pulseDuration } = healthConfig[health];
+  const { color: healthColor, duration: pulseDuration } = healthConfig[predictions.predicted_load];
 
   const allVisibleJobs = useMemo(() => {
     return jobs.filter(j => j.status === 'Queued' || j.status === 'Running');
@@ -115,81 +113,95 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
 
 
   return (
-    <div className="relative flex flex-col items-center justify-center" style={{ minWidth: radius * 2.2, minHeight: radius * 2.2 }}>
-      <div className="relative" style={{ width: orbSize, height: orbSize }}>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="relative flex flex-col items-center justify-center cursor-pointer" style={{ minWidth: radius * 2.2, minHeight: radius * 2.2 }}>
+            <div className="relative" style={{ width: orbSize, height: orbSize }}>
 
-        <motion.div
-          className="w-full h-full rounded-full"
-          style={{
-              backgroundColor: `${healthColor.replace(')', ', 0.3)')}`, // Make color transparent
-              boxShadow: `0 0 20px 5px ${healthColor.replace(')', ', 0.7)')}, inset 0 0 15px 2px ${healthColor.replace(')', ', 0.6)')}`,
-          }}
-          animate={{
-            scale: pulse ? [1, 1.2, 1] : [1, 1.05, 1],
-            boxShadow: pulse 
-              ? [
-                  `0 0 20px 5px ${healthColor.replace(')', ', 0.7)')}`, 
-                  '0 0 50px 20px hsl(120 100% 50% / 0.7)',
-                  `0 0 20px 5px ${healthColor.replace(')', ', 0.7)')}`
-                ]
-              : [
-                  `0 0 20px 5px ${healthColor.replace(')', ', 0.7)')}`, 
-                  `0 0 25px 8px ${healthColor.replace(')', ', 0.8)')}`, 
-                  `0 0 20px 5px ${healthColor.replace(')', ', 0.7)')}`
-                ],
-          }}
-          transition={{ 
-              duration: pulse ? 1.2 : pulseDuration, 
-              repeat: pulse ? 0 : Infinity,
-              ease: pulse ? 'easeOut' : 'easeInOut',
-              repeatType: 'reverse'
-          }}
-        />
-        
-        <div className="absolute top-0 left-0 w-full h-full" style={{ transform: "translateZ(0)" }}>
-            <AnimatePresence>
-                {allVisibleJobs.map((job, index) => {
-                    const angle = (index / (allVisibleJobs.length || 1)) * 2 * Math.PI;
-                    const orbitRadius = radius * (1 + (index % 3) * 0.1);
-                    
-                    return (
-                        <motion.div
-                            key={job.id}
-                            className="absolute top-1/2 left-1/2"
-                            style={{
-                                x: '-50%',
-                                y: '-50%',
-                            }}
-                            initial={{ rotate: 0 }}
-                            animate={{
-                                rotate: 360,
-                            }}
-                            transition={{
-                                duration: 10 + (index % 3) * 5,
-                                ease: 'linear',
-                                repeat: Infinity,
-                            }}
-                            exit={{
-                                scale: 0,
-                                opacity: 0,
-                                transition: { duration: 0.5 }
-                            }}
-                        >
-                            <div style={{ transform: `translate(${orbitRadius}px, 0px)` }}>
-                               <JobProgressRing job={job} />
-                            </div>
-                        </motion.div>
-                    );
-                })}
-            </AnimatePresence>
-        </div>
-      </div>
-      
-      <p className="absolute -bottom-6 text-sm font-semibold text-foreground whitespace-nowrap">{backend}</p>
-      <div className="absolute -bottom-12 h-6 w-full flex items-center justify-center">
-        <HeartbeatWaveform status={health} />
-      </div>
-      <p className="absolute -bottom-[68px] text-xs text-muted-foreground whitespace-nowrap">{`Q:${queuedJobs.length} R:${runningJobsCount}`}</p>
-    </div>
+              <motion.div
+                className="w-full h-full rounded-full"
+                style={{
+                    backgroundColor: `${healthColor.replace(')', ', 0.3)')}`, // Make color transparent
+                    boxShadow: `0 0 20px 5px ${healthColor.replace(')', ', 0.7)')}, inset 0 0 15px 2px ${healthColor.replace(')', ', 0.6)')}`,
+                }}
+                animate={{
+                  scale: pulse ? [1, 1.2, 1] : [1, 1.05, 1],
+                  boxShadow: pulse 
+                    ? [
+                        `0 0 40px 10px ${healthColor.replace(')', ', 0.8)')}`, 
+                        '0 0 70px 30px hsl(120 100% 70% / 0.7)',
+                        `0 0 40px 10px ${healthColor.replace(')', ', 0.8)')}`
+                      ]
+                    : [
+                        `0 0 40px 10px ${healthColor.replace(')', ', 0.8)')}`, 
+                        `0 0 50px 15px ${healthColor.replace(')', ', 0.9)')}`, 
+                        `0 0 40px 10px ${healthColor.replace(')', ', 0.8)')}`
+                      ],
+                }}
+                transition={{ 
+                    duration: pulse ? 1.2 : pulseDuration, 
+                    repeat: pulse ? 0 : Infinity,
+                    ease: pulse ? 'easeOut' : 'easeInOut',
+                    repeatType: 'reverse'
+                }}
+              />
+              
+              <div className="absolute top-0 left-0 w-full h-full" style={{ transform: "translateZ(0)" }}>
+                  <AnimatePresence>
+                      {allVisibleJobs.map((job, index) => {
+                          const angle = (index / (allVisibleJobs.length || 1)) * 2 * Math.PI;
+                          const orbitRadius = radius * (1 + (index % 3) * 0.1);
+                          
+                          return (
+                              <motion.div
+                                  key={job.id}
+                                  className="absolute top-1/2 left-1/2"
+                                  style={{
+                                      x: '-50%',
+                                      y: '-50%',
+                                  }}
+                                  initial={{ rotate: 0 }}
+                                  animate={{
+                                      rotate: 360,
+                                  }}
+                                  transition={{
+                                      duration: 10 + (index % 3) * 5,
+                                      ease: 'linear',
+                                      repeat: Infinity,
+                                  }}
+                                  exit={{
+                                      scale: 0,
+                                      opacity: 0,
+                                      transition: { duration: 0.5 }
+                                  }}
+                              >
+                                  <div style={{ transform: `translate(${orbitRadius}px, 0px)` }}>
+                                    <JobProgressRing job={job} />
+                                  </div>
+                              </motion.div>
+                          );
+                      })}
+                  </AnimatePresence>
+              </div>
+            </div>
+            
+            <p className="absolute -bottom-6 text-sm font-semibold text-foreground whitespace-nowrap">{backend}</p>
+            <div className="absolute -bottom-12 h-6 w-full flex items-center justify-center">
+              <HeartbeatWaveform status={predictions.predicted_load} />
+            </div>
+            <p className="absolute -bottom-[68px] text-xs text-muted-foreground whitespace-nowrap">{`Q:${queuedJobs.length} R:${runningJobsCount}`}</p>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+            <div className="space-y-1 p-1 text-foreground">
+                <h4 className="font-bold text-primary">{backend} - Forecast</h4>
+                <p>Predicted Load: <span className="font-semibold" style={{ color: healthColor }}>{predictions.predicted_load.toUpperCase()}</span></p>
+                <p>Est. Wait Time: <span className="font-semibold">{predictions.predicted_avg_wait_seconds}s</span></p>
+                <p>Est. Success Rate: <span className="font-semibold">{(predictions.predicted_success_rate * 100).toFixed(1)}%</span></p>
+            </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
