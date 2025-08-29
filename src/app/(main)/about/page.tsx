@@ -4,7 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Database, BarChart2, Briefcase } from "lucide-react";
+import { Database, BarChart2, Briefcase, BrainCircuit } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -63,6 +63,32 @@ export default function AboutPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <BrainCircuit className="size-6 text-accent" />
+            <CardTitle className="text-accent">Quantum Job Runtime Predictor</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4 text-foreground">
+          <p>
+            This dashboard uses a prediction model to estimate queue times and runtimes for jobs that are not yet complete. By analyzing historical data, the model can provide a valuable "Completion ETA" for queued and running jobs.
+          </p>
+          <h4 className="font-semibold text-accent pt-2">Time Complexity Analysis</h4>
+          <ul className="list-disc pl-5 space-y-2 font-mono text-sm">
+            <li>
+              <span className="font-semibold text-foreground">Training (e.g., Random Forest):</span> O(N ⋅ log N), where N is the number of past jobs in the training set. This is done offline.
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">Prediction (per job):</span> O(1), a constant-time lookup once the model is trained.
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">Dashboard Update (Polling):</span> O(J), where J is the number of jobs being monitored. This is efficient enough for real-time updates.
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   );
 }
