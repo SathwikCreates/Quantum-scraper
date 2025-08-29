@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -92,8 +91,8 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
                             key={job.id}
                             className="absolute w-3.5 h-3.5 rounded-full"
                             style={{
-                                backgroundColor: 'hsl(var(--accent))',
-                                boxShadow: '0 0 10px 1px hsl(var(--accent) / 0.8)',
+                                backgroundColor: 'hsl(var(--primary))',
+                                boxShadow: '0 0 10px 1px hsl(var(--primary) / 0.8)',
                                 transformOrigin: `${orbitRadius}px center`,
                             }}
                             initial={{

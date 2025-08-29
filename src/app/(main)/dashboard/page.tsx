@@ -46,7 +46,7 @@ type DashboardData = {
 const getStatusBadge = (status: JobStatus) => {
     switch (status) {
       case 'Completed':
-        return <Badge variant="default" className="bg-accent text-accent-foreground">Completed</Badge>;
+        return <Badge variant="default" className="bg-green-500/80 text-white">Completed</Badge>;
       case 'Running':
         return <Badge variant="default" className="bg-accent/80 text-accent-foreground">Running</Badge>;
       case 'Failed':
@@ -90,7 +90,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-accent">Total Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium text-primary">Total Jobs</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -100,7 +100,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-accent">Active Jobs</CardTitle>
+            <CardTitle className="text-sm font-medium text-primary">Active Jobs</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -110,7 +110,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-accent">Avg Wait Time</CardTitle>
+            <CardTitle className="text-sm font-medium text-primary">Avg Wait Time</CardTitle>
             <DatabaseZap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-accent">Success Rate</CardTitle>
+            <CardTitle className="text-sm font-medium text-primary">Success Rate</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -131,7 +131,7 @@ export default function DashboardPage() {
       </div>
       <Card>
         <CardHeader>
-            <CardTitle className="text-accent">Recent Jobs</CardTitle>
+            <CardTitle className="text-primary">Recent Jobs</CardTitle>
             <CardDescription className="text-muted-foreground">An overview of the most recent scraping jobs.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -146,7 +146,7 @@ export default function DashboardPage() {
                 </TableHeader>
                 <TableBody>
                     {data.recentJobs.map((job, index) => (
-                        <TableRow key={`${job.id}-${index}`} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
+                        <TableRow key={`${job.id}-${index}`} className="border-b-0 hover:bg-white/5">
                             <TableCell className="font-medium">{job.id}</TableCell>
                             <TableCell>{job.target}</TableCell>
                             <TableCell>{getStatusBadge(job.status)}</TableCell>
@@ -158,7 +158,7 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
       <footer className="text-right text-sm text-muted-foreground mt-4">
-        Powered by Quantum Dashboard
+        Powered by Quantum Scraper
       </footer>
     </div>
   );

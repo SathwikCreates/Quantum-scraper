@@ -16,11 +16,11 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-secondary/80 py-4 shadow-lg backdrop-blur-lg">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/60 shadow-lg backdrop-blur-lg">
       <div className="container flex flex-col items-center justify-center px-4 md:px-6 relative">
         <Link href="/" className="mb-2">
-          <h1 className="text-3xl font-bold text-accent">
-            Quantum Dashboard
+          <h1 className="text-3xl font-bold text-primary">
+            Quantum Scraper
           </h1>
         </Link>
         <nav className="flex items-center space-x-6">
@@ -29,9 +29,9 @@ export function Header() {
               key={link.href}
               href={link.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-accent hover:underline underline-offset-4",
+                "text-sm font-medium transition-colors hover:text-primary hover:underline underline-offset-4",
                 pathname === link.href
-                  ? "text-accent"
+                  ? "text-primary"
                   : "text-foreground"
               )}
             >

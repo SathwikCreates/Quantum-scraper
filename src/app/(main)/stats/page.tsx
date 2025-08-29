@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -143,12 +142,12 @@ export default function StatisticsPage() {
             {
                 label: 'Running',
                 data: statsData.running_vs_completed.map(d => d.running),
-                backgroundColor: 'hsla(var(--accent), 0.8)',
+                backgroundColor: 'hsla(var(--primary), 0.8)',
             },
             {
                 label: 'Completed',
                 data: statsData.running_vs_completed.map(d => d.completed),
-                 backgroundColor: 'hsla(var(--accent), 0.5)',
+                 backgroundColor: 'hsla(var(--accent), 0.8)',
             },
         ],
     };
@@ -173,7 +172,7 @@ export default function StatisticsPage() {
         
         <Card>
             <CardHeader>
-                <CardTitle className="text-accent">Constellation View</CardTitle>
+                <CardTitle className="text-primary">Constellation View</CardTitle>
                 <CardDescription className="text-muted-foreground">A galactic view of your quantum backends. Each orb is a backend, and orbiting dots are queued jobs.</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8 p-6 place-items-center min-h-[300px]">
@@ -186,7 +185,7 @@ export default function StatisticsPage() {
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-accent">Average Wait Time Trend</CardTitle>
+            <CardTitle className="text-primary">Average Wait Time Trend</CardTitle>
             <CardDescription className="text-muted-foreground">Average job wait time over the last hour.</CardDescription>
           </CardHeader>
           <CardContent className="h-[300px]">
@@ -196,7 +195,7 @@ export default function StatisticsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-accent">Backend Usage</CardTitle>
+            <CardTitle className="text-primary">Backend Usage</CardTitle>
             <CardDescription className="text-muted-foreground">Distribution of jobs across different backends.</CardDescription>
           </CardHeader>
           <CardContent className="h-[300px]">
@@ -207,7 +206,7 @@ export default function StatisticsPage() {
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
         <Card>
             <CardHeader>
-                <CardTitle className="text-accent">Running vs Completed Jobs</CardTitle>
+                <CardTitle className="text-primary">Running vs Completed Jobs</CardTitle>
                 <CardDescription className="text-muted-foreground">The current status of all submitted jobs.</CardDescription>
             </CardHeader>
             <CardContent className="h-[350px] flex justify-center">
@@ -216,7 +215,7 @@ export default function StatisticsPage() {
         </Card>
         <Card>
             <CardHeader>
-                <CardTitle className="text-accent">Key Insights</CardTitle>
+                <CardTitle className="text-primary">Key Insights</CardTitle>
                 <CardDescription className="text-muted-foreground">At a glance statistics.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

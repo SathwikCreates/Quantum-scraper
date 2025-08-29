@@ -58,7 +58,7 @@ const JsonViewer = ({ content }: { content: object }) => {
         variant="link"
         size="sm"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="p-0 h-auto text-accent hover:text-accent/80 flex items-center gap-1"
+        className="p-0 h-auto text-primary hover:text-primary/80 flex items-center gap-1"
       >
         {isExpanded ? <MinusSquare className="size-3.5"/> : <PlusSquare className="size-3.5"/>}
         {isExpanded ? 'View Formatted' : 'View Raw JSON'}
@@ -106,7 +106,7 @@ export default function ExplorePage() {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <div>
-                            <CardTitle className="text-accent">Scraped Data Records</CardTitle>
+                            <CardTitle className="text-primary">Scraped Data Records</CardTitle>
                             <CardDescription className="text-muted-foreground">Search and explore the data collected from all jobs.</CardDescription>
                         </div>
                         <div className="flex gap-2">
@@ -135,7 +135,7 @@ export default function ExplorePage() {
                         </TableHeader>
                         <TableBody>
                             {filteredData.length > 0 ? filteredData.map((record, index) => (
-                                <TableRow key={`${record.record_id}-${index}`} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
+                                <TableRow key={`${record.record_id}-${index}`} className="border-b-0 hover:bg-white/5">
                                     <TableCell className="font-medium">{record.record_id}</TableCell>
                                     <TableCell>{record.job_id}</TableCell>
                                     <TableCell>{new Date(record.timestamp).toLocaleString()}</TableCell>

@@ -49,8 +49,8 @@ type JobsData = {
 
 const LiveBadge = ({ status }: { status: 'ws' | 'sse' | 'poll' }) => {
     const statusConfig = {
-        ws: { text: 'LIVE', color: 'bg-accent', tooltip: 'Connected via WebSocket' },
-        sse: { text: 'LIVE', color: 'bg-accent/80', tooltip: 'Connected via SSE' },
+        ws: { text: 'LIVE', color: 'bg-green-500', tooltip: 'Connected via WebSocket' },
+        sse: { text: 'LIVE', color: 'bg-green-500/80', tooltip: 'Connected via SSE' },
         poll: { text: 'POLLING', color: 'bg-muted-foreground', tooltip: 'Polling every 60 seconds' },
     };
     const { text, color, tooltip } = statusConfig[status];
@@ -70,9 +70,9 @@ const LiveBadge = ({ status }: { status: 'ws' | 'sse' | 'poll' }) => {
 const getStatusBadge = (status: JobStatus) => {
     switch (status) {
       case 'Completed':
-        return <Badge variant="default" className="bg-accent text-accent-foreground">Completed</Badge>;
+        return <Badge variant="default" className="bg-green-500/80 text-white">Completed</Badge>;
       case 'Running':
-        return <Badge variant="default" className="bg-accent/80 text-accent-foreground">Running</Badge>;
+        return <Badge variant="default" className="bg-accent text-accent-foreground">Running</Badge>;
       case 'Failed':
         return <Badge variant="destructive">Failed</Badge>;
       case 'Queued':
@@ -149,7 +149,11 @@ export default function JobsPage() {
 
       return (
         <div className="flex flex-col gap-1">
-          <Progress value={progressValue} className="h-2" isPulsing={isPulsing} indicatorClassName={job.status === 'Failed' ? 'bg-destructive' : 'bg-accent'} />
+          <Progress value={progressValue} className="h-2" isPulsing={isPulsing} indicatorClassName={
+            job.status === 'Failed' ? 'bg-destructive' 
+            : job.status === 'Completed' ? 'bg-green-500'
+            : 'bg-accent'
+          } />
           <span className="text-xs text-muted-foreground text-center">{text}</span>
         </div>
       )
@@ -166,7 +170,7 @@ export default function JobsPage() {
             </div>
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-accent">All Jobs</CardTitle>
+                    <CardTitle className="text-primary">All Jobs</CardTitle>
                     <CardDescription className="text-muted-foreground">Search, filter, and monitor all quantum jobs.</CardDescription>
                     <div className="mt-4 flex flex-col md:flex-row gap-2">
                         <Input
@@ -214,8 +218,8 @@ export default function JobsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {filteredJobs.length > 0 ? filteredJobs.map((job, index) => (
-                                <TableRow key={job.id} className={index % 2 === 0 ? 'bg-background hover:bg-card/60' : 'bg-card hover:bg-card/60'}>
+                            {filteredJobs.length > 0 ? filteredJobs.map((job) => (
+                                <TableRow key={job.id} className="border-b-0 hover:bg-white/5">
                                     <TableCell className="font-medium">{job.id}</TableCell>
                                     <TableCell className="truncate max-w-xs">{job.backend}</TableCell>
                                     <TableCell>{getStatusBadge(job.status)}</TableCell>

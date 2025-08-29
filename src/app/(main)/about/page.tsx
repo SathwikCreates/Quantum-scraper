@@ -10,13 +10,13 @@ export default function AboutPage() {
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold tracking-tight text-center text-foreground">About Quantum Scraper</h1>
-      <p className="text-center text-accent italic text-lg">
+      <p className="text-center text-primary italic text-lg">
         “We show real-time jobs, while others only show you the job.”
       </p>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-accent">The Ultimate Scraping Dashboard</CardTitle>
+          <CardTitle className="text-primary">The Ultimate Scraping Dashboard</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-foreground">
           <p>
@@ -32,8 +32,8 @@ export default function AboutPage() {
         <Card className="flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Briefcase className="size-6 text-accent" />
-              <CardTitle className="text-accent">Live Job Monitoring</CardTitle>
+              <Briefcase className="size-6 text-primary" />
+              <CardTitle className="text-primary">Live Job Monitoring</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="flex-1 text-foreground">
@@ -43,8 +43,8 @@ export default function AboutPage() {
         <Card className="flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <BarChart2 className="size-6 text-accent" />
-              <CardTitle className="text-accent">Insightful Analytics</CardTitle>
+              <BarChart2 className="size-6 text-primary" />
+              <CardTitle className="text-primary">Insightful Analytics</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="flex-1 text-foreground">
@@ -54,8 +54,8 @@ export default function AboutPage() {
         <Card className="flex flex-col">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Database className="size-6 text-accent" />
-              <CardTitle className="text-accent">Data Exploration</CardTitle>
+              <Database className="size-6 text-primary" />
+              <CardTitle className="text-primary">Data Exploration</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="flex-1 text-foreground">
@@ -67,15 +67,15 @@ export default function AboutPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <BrainCircuit className="size-6 text-accent" />
-            <CardTitle className="text-accent">Quantum Job Runtime Predictor</CardTitle>
+            <BrainCircuit className="size-6 text-primary" />
+            <CardTitle className="text-primary">Quantum Job Runtime Predictor</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4 text-foreground">
           <p>
             This dashboard uses a prediction model to estimate queue times and runtimes for jobs that are not yet complete. By analyzing historical data, the model can provide a valuable "Completion ETA" for queued and running jobs.
           </p>
-          <h4 className="font-semibold text-accent pt-2">Time Complexity Analysis</h4>
+          <h4 className="font-semibold text-primary pt-2">Time Complexity Analysis</h4>
           <ul className="list-disc pl-5 space-y-2 font-mono text-sm">
             <li>
               <span className="font-semibold text-foreground">Training (e.g., Random Forest):</span> O(N ⋅ log N), where N is the number of past jobs in the training set. This is done offline.

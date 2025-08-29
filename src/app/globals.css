@@ -3,63 +3,78 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 @layer base {
   :root {
-    --background: 222 14% 16%; /* #222831 */
-    --foreground: 210 17% 95%; /* #EEEEEE */
-    --card: 221 12% 22% / 0.6; /* #393E46 with alpha */
-    --card-foreground: 210 17% 95%; /* #EEEEEE */
-    --popover: 221 12% 22%; /* #393E46 */
-    --popover-foreground: 210 17% 95%; /* #EEEEEE */
-    --primary: 183 100% 36%; /* #00ADB5 */
-    --primary-foreground: 210 17% 95%; /* #EEEEEE */
-    --secondary: 221 12% 22% / 0.6; /* #393E46 with alpha */
-    --secondary-foreground: 210 17% 95%; /* #EEEEEE */
-    --muted: 221 12% 28%; /* #414853 */
-    --muted-foreground: 210 17% 80%; /* #EEEEEE with opacity */
-    --accent: 183 100% 36%; /* #00ADB5 */
-    --accent-foreground: 210 17% 95%; /* #EEEEEE */
+    --background: 222 47% 11%; /* #1B263B - Navy Blue */
+    --foreground: 210 40% 98%; /* #ECF0F1 - Light Gray */
+
+    --card: 216 33% 23%; /* #2C3E50 - Dark Slate Gray */
+    --card-foreground: 210 40% 98%; /* #ECF0F1 - Light Gray */
+
+    --popover: 222 47% 11%; /* #1B263B */
+    --popover-foreground: 210 40% 98%; /* #ECF0F1 */
+
+    --primary: 16 100% 62%; /* #FF6F3C - Deep Orange */
+    --primary-foreground: 210 40% 98%; /* #ECF0F1 */
+
+    --secondary: 216 33% 23%; /* #2C3E50 */
+    --secondary-foreground: 210 40% 98%; /* #ECF0F1 */
+
+    --muted: 215 28% 28%; /* #34495E - Rich Indigo-Gray */
+    --muted-foreground: 210 40% 98% / 0.6; /* #ECF0F1 with alpha */
+    
+    --accent: 175 69% 53%; /* #4BC6B9 - Teal */
+    --accent-foreground: 222 47% 11%; /* #1B263B */
+
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 221 12% 28% / 0.5; /* #414853 with alpha */
-    --input: 221 12% 22% / 0.6; /* #393E46 with alpha */
-    --ring: 183 100% 36%; /* #00ADB5 */
-    --chart-1: 183 100% 36%;
-    --chart-2: 210 17% 95%;
-    --chart-3: 221 12% 22%;
-    --chart-4: 183 100% 45%;
-    --chart-5: 210 17% 80%;
+    
+    --border: 215 28% 28% / 0.5; /* #34495E with alpha */
+    --input: 216 33% 23% / 0.5; /* #2C3E50 with alpha */
+    --ring: 16 100% 62%; /* #FF6F3C */
+
+    --chart-1: 175 69% 53%; /* Teal */
+    --chart-2: 16 100% 62%; /* Orange */
+    --chart-3: 283 44% 56%; /* Magenta/Purple */
+    --chart-4: 210 40% 98%; /* Light Gray */
+    --chart-5: 215 28% 28%; /* Indigo-Gray */
+    
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222 14% 16%; /* #222831 */
-    --foreground: 210 17% 95%; /* #EEEEEE */
-    --card: 221 12% 22% / 0.6; /* #393E46 with alpha */
-    --card-foreground: 210 17% 95%; /* #EEEEEE */
-    --popover: 221 12% 22%; /* #393E46 */
-    --popover-foreground: 210 17% 95%; /* #EEEEEE */
-    --primary: 183 100% 36%; /* #00ADB5 */
-    --primary-foreground: 210 17% 95%; /* #EEEEEE */
-    --secondary: 221 12% 22% / 0.6; /* #393E46 with alpha */
-    --secondary-foreground: 210 17% 95%; /* #EEEEEE */
-    --muted: 221 12% 28%; /* #414853 */
-    --muted-foreground: 210 17% 80%;
-    --accent: 183 100% 36%; /* #00ADB5 */
-    --accent-foreground: 210 17% 95%; /* #EEEEEE */
+    --background: 222 47% 11%; /* #1B263B - Navy Blue */
+    --foreground: 210 40% 98%; /* #ECF0F1 - Light Gray */
+
+    --card: 216 33% 23%; /* #2C3E50 - Dark Slate Gray */
+    --card-foreground: 210 40% 98%; /* #ECF0F1 - Light Gray */
+
+    --popover: 222 47% 11%; /* #1B263B */
+    --popover-foreground: 210 40% 98%; /* #ECF0F1 */
+
+    --primary: 16 100% 62%; /* #FF6F3C - Deep Orange */
+    --primary-foreground: 210 40% 98%; /* #ECF0F1 */
+
+    --secondary: 216 33% 23%; /* #2C3E50 */
+    --secondary-foreground: 210 40% 98%; /* #ECF0F1 */
+
+    --muted: 215 28% 28%; /* #34495E - Rich Indigo-Gray */
+    --muted-foreground: 210 40% 98% / 0.6; /* #ECF0F1 with alpha */
+    
+    --accent: 175 69% 53%; /* #4BC6B9 - Teal */
+    --accent-foreground: 222 47% 11%; /* #1B263B */
+
     --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 221 12% 28% / 0.5; /* #414853 with alpha */
-    --input: 221 12% 22% / 0.6; /* #393E46 with alpha */
-    --ring: 183 100% 36%; /* #00ADB5 */
-    --chart-1: 183 100% 36%;
-    --chart-2: 210 17% 95%;
-    --chart-3: 221 12% 22%;
-    --chart-4: 183 100% 45%;
-    --chart-5: 210 17% 80%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 215 28% 28% / 0.5; /* #34495E with alpha */
+    --input: 216 33% 23% / 0.5; /* #2C3E50 with alpha */
+    --ring: 16 100% 62%; /* #FF6F3C */
+    
+    --radius: 0.5rem;
   }
 }
 
@@ -69,5 +84,6 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-inter), sans-serif;
   }
 }

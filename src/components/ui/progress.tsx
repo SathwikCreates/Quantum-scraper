@@ -19,7 +19,7 @@ const Progress = React.forwardRef<
   >
     <ProgressPrimitive.Indicator
       className={cn(
-        "h-full w-full flex-1 bg-accent transition-all",
+        "h-full w-full flex-1 bg-primary transition-all",
         { "animate-pulse": isPulsing },
         indicatorClassName
       )}
