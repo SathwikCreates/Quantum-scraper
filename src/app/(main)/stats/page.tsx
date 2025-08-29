@@ -73,7 +73,7 @@ export default function StatisticsPage() {
             const jsonData = await response.json();
             setStatsData(jsonData);
             setLastUpdated(new Date().toLocaleTimeString());
-        } catch (error) => {
+        } catch (error) {
             console.error("Failed to fetch statistics data:", error);
         }
     };
@@ -93,7 +93,7 @@ export default function StatisticsPage() {
             return matchesStatus && matchesBackend;
         });
         
-        const statusMap = {
+        const statusMap: any = {
             Completed: {
                 data: [],
                 backgroundColor: 'hsla(140, 70%, 60%, 0.7)',
@@ -127,7 +127,7 @@ export default function StatisticsPage() {
         });
 
         return {
-            datasets: Object.entries(statusMap).map(([status, { data, backgroundColor, borderColor }]) => ({
+            datasets: Object.entries(statusMap).map(([status, { data, backgroundColor, borderColor }]: [string, any]) => ({
                 label: status,
                 data: data,
                 backgroundColor: backgroundColor,
