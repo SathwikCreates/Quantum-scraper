@@ -54,11 +54,18 @@ const dashboardData = () => {
 
 const jobsData = () => {
     const backends = ['ibm_q_16_melbourne', 'ibmq_armonk', 'ibmq_santiago', 'ibmq_bogota', 'ibmq_lima', 'ibmq_belem', 'ibmq_quito', 'ibmq_qasm_simulator', 'ibm_oslo'];
+    const jobIds = new Set();
     
     const generateJob = (status: 'Queued' | 'Running' | 'Completed' | 'Failed'): any => {
         const submittedAt = new Date(Date.now() - getRandomInt(1000, 86400000));
+        let jobId;
+        do {
+            jobId = `JOB-${getRandomInt(1000, 4000)}`;
+        } while (jobIds.has(jobId));
+        jobIds.add(jobId);
+
         const job: any = {
-            id: `JOB-${getRandomInt(1000, 4000)}`,
+            id: jobId,
             backend: backends[getRandomInt(0, backends.length - 1)],
             status: status,
             submitted_at: submittedAt.toISOString(),
@@ -86,10 +93,10 @@ const jobsData = () => {
     }
     
     return {
-        queued: Array.from({ length: getRandomInt(5, 15) }, () => generateJob('Queued')),
-        running: Array.from({ length: getRandomInt(3, 8) }, () => generateJob('Running')),
-        completed: Array.from({ length: getRandomInt(10, 20) }, () => generateJob('Completed')),
-        failed: Array.from({ length: getRandomInt(0, 2) }, () => generateJob('Failed')),
+        queued: Array.from({ length: getRandomInt(20, 30) }, () => generateJob('Queued')),
+        running: Array.from({ length: getRandomInt(5, 10) }, () => generateJob('Running')),
+        completed: Array.from({ length: getRandomInt(20, 30) }, () => generateJob('Completed')),
+        failed: Array.from({ length: getRandomInt(1, 3) }, () => generateJob('Failed')),
     }
 }
 
@@ -127,7 +134,7 @@ const statsData = () => ({
 const recordsData = () => {
     const records = [];
     const recordIds = new Set();
-    const totalRecords = 15;
+    const totalRecords = 50;
 
     for (let i = 0; i < totalRecords; i++) {
         let recordId;
