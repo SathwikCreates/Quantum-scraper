@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 
 type JobStatus = 'Completed' | 'Running' | 'Failed' | 'Queued';
 
@@ -118,16 +119,40 @@ export default function JobsPage() {
     });
 
     const renderRuntime = (job: Job) => {
-        if (job.status === 'Completed' || job.status === 'Failed') {
-            return job.runtime_seconds !== null ? `${job.runtime_seconds}s` : 'N/A';
-        }
-        if (job.status === 'Running') {
-            return `${job.runtime_seconds}s (actual) / ~${job.predicted_runtime_seconds}s`;
-        }
-        if (job.status === 'Queued') {
-            return job.predicted_runtime_seconds !== null ? `~${job.predicted_runtime_seconds}s` : 'N/A';
-        }
-        return 'N/A';
+      let progressValue = 0;
+      let text = 'N/A';
+      let isPulsing = false;
+      
+      switch(job.status) {
+        case 'Completed':
+          progressValue = 100;
+          text = job.runtime_seconds !== null ? `${job.runtime_seconds}s` : 'N/A';
+          break;
+        case 'Failed':
+          progressValue = 100;
+          text = job.runtime_seconds !== null ? `${job.runtime_seconds}s` : 'N/A';
+          break;
+        case 'Running':
+          if (job.runtime_seconds !== null && job.predicted_runtime_seconds !== null && job.predicted_runtime_seconds > 0) {
+            progressValue = Math.min(100, (job.runtime_seconds / job.predicted_runtime_seconds) * 100);
+          }
+          text = `${job.runtime_seconds}s / ~${job.predicted_runtime_seconds}s`;
+          break;
+        case 'Queued':
+          isPulsing = true;
+          progressValue = 2; // Small fixed value for visual feedback
+          text = job.predicted_runtime_seconds !== null ? `~${job.predicted_runtime_seconds}s` : 'N/A';
+          break;
+        default:
+          text = 'N/A';
+      }
+
+      return (
+        <div className="flex flex-col gap-1">
+          <Progress value={progressValue} className="h-2" isPulsing={isPulsing} indicatorClassName={job.status === 'Failed' ? 'bg-destructive' : 'bg-accent'} />
+          <span className="text-xs text-muted-foreground text-center">{text}</span>
+        </div>
+      )
     };
 
     return (
