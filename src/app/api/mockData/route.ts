@@ -56,19 +56,28 @@ const jobsData = () => {
     const backends = ['ibm_q_16_melbourne', 'ibmq_armonk', 'ibmq_santiago', 'ibmq_bogota', 'ibmq_lima', 'ibmq_belem', 'ibmq_quito', 'ibmq_qasm_simulator', 'ibm_oslo'];
     
     const generateJob = (status: 'Queued' | 'Running' | 'Completed' | 'Failed'): any => {
+        const submittedAt = new Date(Date.now() - getRandomInt(1000, 86400000));
         const job: any = {
             id: `JOB-${getRandomInt(1000, 4000)}`,
             backend: backends[getRandomInt(0, backends.length - 1)],
             status: status,
-            submitted_at: new Date(Date.now() - getRandomInt(1000, 86400000)).toISOString(),
+            submitted_at: submittedAt.toISOString(),
             queue_position: null,
-            runtime_seconds: null
+            runtime_seconds: null,
+            predicted_runtime_seconds: null,
+            estimated_completion_time: null,
         }
         if (status === 'Queued') {
             job.queue_position = getRandomInt(1, 50);
+            const predicted_runtime_seconds = getRandomInt(180, 700);
+            job.predicted_runtime_seconds = predicted_runtime_seconds;
+            job.estimated_completion_time = new Date(submittedAt.getTime() + (job.queue_position * 30000) + (predicted_runtime_seconds * 1000)).toISOString();
         }
         if (status === 'Running') {
              job.runtime_seconds = getRandomInt(5, 300);
+             const predicted_runtime_seconds = getRandomInt(job.runtime_seconds, 800);
+             job.predicted_runtime_seconds = predicted_runtime_seconds;
+             job.estimated_completion_time = new Date(submittedAt.getTime() + (predicted_runtime_seconds * 1000)).toISOString();
         }
         if (status === 'Completed' || status === 'Failed') {
             job.runtime_seconds = getRandomInt(5, 1200);

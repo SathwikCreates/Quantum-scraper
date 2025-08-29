@@ -35,6 +35,8 @@ type Job = {
   queue_position: number | null;
   submitted_at: string;
   runtime_seconds: number | null;
+  predicted_runtime_seconds: number | null;
+  estimated_completion_time: string | null;
 };
 
 type JobsData = {
@@ -115,6 +117,19 @@ export default function JobsPage() {
         return matchesSearch && matchesStatus && matchesBackend;
     });
 
+    const renderRuntime = (job: Job) => {
+        if (job.status === 'Completed' || job.status === 'Failed') {
+            return job.runtime_seconds !== null ? `${job.runtime_seconds}s` : 'N/A';
+        }
+        if (job.status === 'Running') {
+            return `${job.runtime_seconds}s (actual) / ~${job.predicted_runtime_seconds}s`;
+        }
+        if (job.status === 'Queued') {
+            return job.predicted_runtime_seconds !== null ? `~${job.predicted_runtime_seconds}s` : 'N/A';
+        }
+        return 'N/A';
+    };
+
     return (
         <div className="space-y-6 w-full max-w-7xl mx-auto">
             <div className="flex justify-between items-center">
@@ -169,7 +184,8 @@ export default function JobsPage() {
                                 <TableHead className="text-foreground">Status</TableHead>
                                 <TableHead className="text-foreground">Submitted Time</TableHead>
                                 <TableHead className="text-foreground">Queue Position</TableHead>
-                                <TableHead className="text-right text-foreground">Runtime</TableHead>
+                                <TableHead className="text-foreground">Runtime (Predicted)</TableHead>
+                                <TableHead className="text-right text-foreground">Completion ETA</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -182,11 +198,14 @@ export default function JobsPage() {
                                     <TableCell>
                                         {job.queue_position !== null ? job.queue_position : 'N/A'}
                                     </TableCell>
-                                    <TableCell className="text-right">{job.runtime_seconds !== null ? `${job.runtime_seconds}s` : 'N/A'}</TableCell>
+                                    <TableCell>{renderRuntime(job)}</TableCell>
+                                    <TableCell className="text-right">
+                                        {job.estimated_completion_time ? new Date(job.estimated_completion_time).toLocaleString() : 'N/A'}
+                                    </TableCell>
                                 </TableRow>
                             )) : (
                               <TableRow>
-                                <TableCell colSpan={6} className="h-24 text-center text-foreground">
+                                <TableCell colSpan={7} className="h-24 text-center text-foreground">
                                   No results found.
                                 </TableCell>
                               </TableRow>
