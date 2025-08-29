@@ -1,6 +1,5 @@
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
-import { Copilot } from "@/components/copilot/copilot";
 
 export default function MainLayout({
   children,
@@ -13,7 +12,6 @@ export default function MainLayout({
       <main className="flex-1 p-4 md:p-6 flex justify-center">
         {children}
       </main>
-      <Copilot />
       <Footer />
     </div>
   );
