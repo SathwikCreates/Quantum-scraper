@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -18,7 +19,7 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { QuantumOrb } from '@/components/quantum-orb';
+import { QuantumOrb, Job as QuantumOrbJob } from '@/components/quantum-orb';
 
 ChartJS.register(
   CategoryScale,
@@ -33,12 +34,6 @@ ChartJS.register(
   TimeScale
 );
 
-type Job = {
-    id: string;
-    backend: string;
-    status: 'Queued' | 'Running' | 'Completed' | 'Failed';
-};
-
 type StatsData = {
     avg_wait_seconds: number;
     trends: { time: string; avg_wait_seconds: number }[];
@@ -47,10 +42,10 @@ type StatsData = {
     busiest_backend: string;
     fastest_backend: string;
     jobs: {
-      queued: Job[];
-      running: Job[];
-      completed: Job[];
-      failed: Job[];
+      queued: QuantumOrbJob[];
+      running: QuantumOrbJob[];
+      completed: QuantumOrbJob[];
+      failed: QuantumOrbJob[];
     }
 };
 
@@ -71,7 +66,7 @@ export default function StatisticsPage() {
 
     useEffect(() => {
         fetchData();
-        const interval = setInterval(fetchData, 60000);
+        const interval = setInterval(fetchData, 5000); // Fetch more frequently for live orbs
         return () => clearInterval(interval);
     }, []);
 
@@ -155,13 +150,13 @@ export default function StatisticsPage() {
     const stackedBarOptions = { ...chartOptions, scales: { ...chartOptions.scales, x: { ...chartOptions.scales?.x, stacked: true }, y: { ...chartOptions.scales?.y, stacked: true } }};
 
     const allJobs = [...statsData.jobs.queued, ...statsData.jobs.running, ...statsData.jobs.completed, ...(statsData.jobs.failed || [])];
-    const jobsByBackend: Record<string, Job[]> = allJobs.reduce((acc, job) => {
+    const jobsByBackend: Record<string, QuantumOrbJob[]> = allJobs.reduce((acc, job) => {
         if (!acc[job.backend]) {
             acc[job.backend] = [];
         }
         acc[job.backend].push(job);
         return acc;
-    }, {} as Record<string, Job[]>);
+    }, {} as Record<string, QuantumOrbJob[]>);
 
 
   return (

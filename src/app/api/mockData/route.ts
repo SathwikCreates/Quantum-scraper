@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 
 function getRandomInt(min: number, max: number) {
@@ -40,12 +41,13 @@ const generateJob = (status: 'Queued' | 'Running' | 'Completed' | 'Failed'): any
     }
     if (status === 'Running') {
          job.runtime_seconds = getRandomInt(5, 300);
-         const predicted_runtime_seconds = getRandomInt(job.runtime_seconds, 800);
+         const predicted_runtime_seconds = getRandomInt(job.runtime_seconds + 10, 800);
          job.predicted_runtime_seconds = predicted_runtime_seconds;
          job.estimated_completion_time = new Date(submittedAt.getTime() + (predicted_runtime_seconds * 1000)).toISOString();
     }
     if (status === 'Completed' || status === 'Failed') {
         job.runtime_seconds = getRandomInt(5, 1200);
+        job.predicted_runtime_seconds = job.runtime_seconds + getRandomInt(-50, 50);
     }
     return job;
 }

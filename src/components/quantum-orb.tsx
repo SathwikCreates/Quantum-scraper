@@ -4,10 +4,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useMemo } from "react";
 import { HeartPulse } from "lucide-react";
+import { JobProgressRing } from "./job-progress-ring";
 
-type Job = {
+export type Job = {
   id: string;
   status: 'Queued' | 'Running' | 'Completed' | 'Failed';
+  runtime_seconds: number | null;
+  predicted_runtime_seconds: number | null;
 };
 
 type QuantumOrbProps = {
@@ -64,9 +67,9 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
   const [completedJobIds, setCompletedJobIds] = useState<Set<string>>(new Set());
   const [pulse, setPulse] = useState(false);
 
-  const { queuedJobs, runningJobsCount, health } = useMemo(() => {
+  const { queuedJobs, runningJobs, runningJobsCount, health } = useMemo(() => {
     const queuedJobs = jobs.filter(j => j.status === 'Queued');
-    const runningJobsCount = jobs.filter(j => j.status === 'Running').length;
+    const runningJobs = jobs.filter(j => j.status === 'Running');
     const failedJobsCount = jobs.filter(j => j.status === 'Failed').length;
 
     let currentHealth: HealthStatus = 'healthy';
@@ -76,7 +79,7 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
         currentHealth = 'moderate';
     }
 
-    return { queuedJobs, runningJobsCount, health: currentHealth };
+    return { queuedJobs, runningJobs, runningJobsCount: runningJobs.length, health: currentHealth };
   }, [jobs]);
 
   useEffect(() => {
@@ -96,7 +99,7 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
   }, [jobs]);
 
   const orbSize = 120;
-  const jobSize = 14;
+  const jobSize = 18; // Increased to accommodate the ring
   const radius = orbSize / 2 + jobSize * 1.5;
 
   const healthConfig: Record<HealthStatus, { color: string; duration: number }> = {
@@ -105,6 +108,11 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
     unstable: { color: 'hsl(var(--destructive))', duration: 0.8 }, // Red, fast pulse
   }
   const { color: healthColor, duration: pulseDuration } = healthConfig[health];
+
+  const allVisibleJobs = useMemo(() => {
+    return jobs.filter(j => j.status === 'Queued' || j.status === 'Running');
+  }, [jobs]);
+
 
   return (
     <div className="relative flex flex-col items-center justify-center" style={{ minWidth: radius * 2.2, minHeight: radius * 2.2 }}>
@@ -140,11 +148,9 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
         
         <div className="absolute top-0 left-0 w-full h-full" style={{ transform: "translateZ(0)" }}>
             <AnimatePresence>
-                {queuedJobs.map((job, index) => {
-                    const angle = (index / (queuedJobs.length || 1)) * 2 * Math.PI;
+                {allVisibleJobs.map((job, index) => {
+                    const angle = (index / (allVisibleJobs.length || 1)) * 2 * Math.PI;
                     const orbitRadius = radius * (1 + (index % 3) * 0.1);
-                    const initialX = Math.cos(angle) * orbitRadius;
-                    const initialY = Math.sin(angle) * orbitRadius;
                     
                     return (
                         <motion.div
@@ -154,14 +160,12 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
                                 x: '-50%',
                                 y: '-50%',
                             }}
-                            initial={{ x: `${initialX}px`, y: `${initialY}px`, rotate: 0 }}
+                            initial={{ rotate: 0 }}
                             animate={{
                                 rotate: 360,
-                                x: `${initialX}px`,
-                                y: `${initialY}px`,
                             }}
                             transition={{
-                                duration: 10 + (index % 3) * 2,
+                                duration: 10 + (index % 3) * 5,
                                 ease: 'linear',
                                 repeat: Infinity,
                             }}
@@ -171,13 +175,9 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
                                 transition: { duration: 0.5 }
                             }}
                         >
-                             <motion.div
-                                className="w-3.5 h-3.5 rounded-full"
-                                style={{
-                                    backgroundColor: 'hsl(var(--primary))',
-                                    boxShadow: '0 0 10px 1px hsl(var(--primary) / 0.8)',
-                                }}
-                             />
+                            <div style={{ transform: `translate(${orbitRadius}px, 0px)` }}>
+                               <JobProgressRing job={job} />
+                            </div>
                         </motion.div>
                     );
                 })}
