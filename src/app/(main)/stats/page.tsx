@@ -154,7 +154,7 @@ export default function StatisticsPage() {
     };
     const stackedBarOptions = { ...chartOptions, scales: { ...chartOptions.scales, x: { ...chartOptions.scales?.x, stacked: true }, y: { ...chartOptions.scales?.y, stacked: true } }};
 
-    const allJobs = [...statsData.jobs.queued, ...statsData.jobs.running, ...statsData.jobs.completed, ...statsData.jobs.failed];
+    const allJobs = [...statsData.jobs.queued, ...statsData.jobs.running, ...statsData.jobs.completed, ...(statsData.jobs.failed || [])];
     const jobsByBackend: Record<string, Job[]> = allJobs.reduce((acc, job) => {
         if (!acc[job.backend]) {
             acc[job.backend] = [];

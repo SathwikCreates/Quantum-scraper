@@ -102,6 +102,7 @@ const statsData = () => {
     const queuedJobs = Array.from({ length: getRandomInt(10, 15) }, () => generateJob('Queued'));
     const runningJobs = Array.from({ length: getRandomInt(3, 5) }, () => generateJob('Running'));
     const completedJobs = Array.from({ length: getRandomInt(10, 15) }, () => generateJob('Completed'));
+    const failedJobs = Array.from({ length: getRandomInt(0, 2) }, () => generateJob('Failed'));
     
     return {
         total_jobs: getRandomInt(1200, 1300),
@@ -135,7 +136,8 @@ const statsData = () => {
         jobs: {
             queued: queuedJobs,
             running: runningJobs,
-            completed: completedJobs
+            completed: completedJobs,
+            failed: failedJobs
         }
     }
 };
