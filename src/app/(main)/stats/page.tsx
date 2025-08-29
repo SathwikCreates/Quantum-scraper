@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Bar, Line, Pie } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,6 +17,7 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { QuantumOrb } from '@/components/quantum-orb';
 
 ChartJS.register(
   CategoryScale,
@@ -31,6 +32,12 @@ ChartJS.register(
   TimeScale
 );
 
+type Job = {
+    id: string;
+    backend: string;
+    status: 'Queued' | 'Running' | 'Completed' | 'Failed';
+};
+
 type StatsData = {
     avg_wait_seconds: number;
     trends: { time: string; avg_wait_seconds: number }[];
@@ -38,6 +45,11 @@ type StatsData = {
     running_vs_completed: { time: string; running: number; completed: number }[];
     busiest_backend: string;
     fastest_backend: string;
+    jobs: {
+      queued: Job[];
+      running: Job[];
+      completed: Job[];
+    }
 };
 
 export default function StatisticsPage() {
@@ -140,12 +152,35 @@ export default function StatisticsPage() {
     };
     const stackedBarOptions = { ...chartOptions, scales: { ...chartOptions.scales, x: { ...chartOptions.scales?.x, stacked: true }, y: { ...chartOptions.scales?.y, stacked: true } }};
 
+    const allJobs = [...statsData.jobs.queued, ...statsData.jobs.running, ...statsData.jobs.completed];
+    const jobsByBackend: Record<string, Job[]> = allJobs.reduce((acc, job) => {
+        if (!acc[job.backend]) {
+            acc[job.backend] = [];
+        }
+        acc[job.backend].push(job);
+        return acc;
+    }, {} as Record<string, Job[]>);
+
+
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
         <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Statistics</h1>
             <p className="text-sm text-muted-foreground">Last updated: {lastUpdated}</p>
         </div>
+        
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-accent">Live Backend Status</CardTitle>
+                <CardDescription className="text-muted-foreground">A galactic view of your quantum backends.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 p-6 place-items-center">
+                {Object.entries(jobsByBackend).map(([backend, jobs]) => (
+                    <QuantumOrb key={backend} backend={backend} jobs={jobs} />
+                ))}
+            </CardContent>
+        </Card>
+
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader>
