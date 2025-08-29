@@ -348,7 +348,7 @@ export default function StatisticsPage() {
                 <CardDescription className="text-muted-foreground">The current status of all submitted jobs.</CardDescription>
             </CardHeader>
             <CardContent className="h-[350px] flex justify-center">
-                <Bar options={stackedBarOptions as any} data={stackedBarData} />
+                <Bar options={stackedBarOptions as any} data={stackedBarChartData} />
             </CardContent>
         </Card>
         <Card>
