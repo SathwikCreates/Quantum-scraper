@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -49,6 +50,7 @@ type StatsData = {
       queued: Job[];
       running: Job[];
       completed: Job[];
+      failed: Job[];
     }
 };
 
@@ -84,7 +86,7 @@ export default function StatisticsPage() {
             legend: {
                 position: 'top' as const,
                 labels: {
-                    color: '#EEEEEE',
+                    color: 'hsl(var(--foreground))',
                 }
             },
             title: {
@@ -94,7 +96,7 @@ export default function StatisticsPage() {
         scales: {
             x: {
                 ticks: {
-                    color: '#EEEEEE',
+                    color: 'hsl(var(--foreground))',
                 },
                 grid: {
                     color: 'hsl(var(--muted))',
@@ -102,7 +104,7 @@ export default function StatisticsPage() {
             },
             y: {
                 ticks: {
-                    color: '#EEEEEE',
+                    color: 'hsl(var(--foreground))',
                 },
                 grid: {
                     color: 'hsl(var(--muted))',
@@ -152,7 +154,7 @@ export default function StatisticsPage() {
     };
     const stackedBarOptions = { ...chartOptions, scales: { ...chartOptions.scales, x: { ...chartOptions.scales?.x, stacked: true }, y: { ...chartOptions.scales?.y, stacked: true } }};
 
-    const allJobs = [...statsData.jobs.queued, ...statsData.jobs.running, ...statsData.jobs.completed];
+    const allJobs = [...statsData.jobs.queued, ...statsData.jobs.running, ...statsData.jobs.completed, ...statsData.jobs.failed];
     const jobsByBackend: Record<string, Job[]> = allJobs.reduce((acc, job) => {
         if (!acc[job.backend]) {
             acc[job.backend] = [];
@@ -171,10 +173,10 @@ export default function StatisticsPage() {
         
         <Card>
             <CardHeader>
-                <CardTitle className="text-accent">Live Backend Status</CardTitle>
-                <CardDescription className="text-muted-foreground">A galactic view of your quantum backends.</CardDescription>
+                <CardTitle className="text-accent">Constellation View</CardTitle>
+                <CardDescription className="text-muted-foreground">A galactic view of your quantum backends. Each orb is a backend, and orbiting dots are queued jobs.</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 p-6 place-items-center">
+            <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8 p-6 place-items-center min-h-[300px]">
                 {Object.entries(jobsByBackend).map(([backend, jobs]) => (
                     <QuantumOrb key={backend} backend={backend} jobs={jobs} />
                 ))}
