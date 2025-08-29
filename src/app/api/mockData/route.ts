@@ -194,6 +194,45 @@ const recordsData = () => {
     return records;
 };
 
+const copilotData = () => {
+    jobIds.clear();
+    const all_jobs = [
+        ...Array.from({ length: 50 }, () => generateJob('Completed')),
+        ...Array.from({ length: 10 }, () => generateJob('Running')),
+        ...Array.from({ length: 5 }, () => generateJob('Failed')),
+        ...Array.from({ length: 20 }, () => generateJob('Queued')),
+    ];
+
+    const backend_summary = backends.map(backend => {
+        const jobsOnBackend = all_jobs.filter(j => j.backend === backend);
+        const queuedCount = jobsOnBackend.filter(j => j.status === 'Queued').length;
+        const failedCount = jobsOnBackend.filter(j => j.status === 'Failed').length;
+        const completedCount = jobsOnBackend.filter(j => j.status === 'Completed').length;
+
+        let health: 'healthy' | 'moderate' | 'unstable' = 'healthy';
+        if (queuedCount > 15 || failedCount > 1) {
+            health = 'unstable';
+        } else if (queuedCount > 5) {
+            health = 'moderate';
+        }
+        
+        return {
+            name: backend,
+            health: health,
+            queued_jobs: queuedCount,
+            running_jobs: jobsOnBackend.filter(j => j.status === 'Running').length,
+            avg_wait_seconds: queuedCount * getRandomInt(5, 15),
+            success_rate: 1 - (failedCount / (completedCount + failedCount + 1)),
+        };
+    });
+
+    return {
+        jobs: all_jobs,
+        backends: backend_summary,
+        current_time: new Date().toISOString(),
+    }
+}
+
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
@@ -211,6 +250,9 @@ export async function GET(request: Request) {
             break;
         case 'records':
             data = recordsData();
+            break;
+        case 'copilot':
+            data = copilotData();
             break;
         default:
             return NextResponse.json({ error: 'Invalid data type requested' }, { status: 400 });
