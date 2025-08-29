@@ -2,8 +2,8 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
-import { Bar, Line } from 'react-chartjs-2';
+import { useEffect, useState, useMemo } from 'react';
+import { Bar, Line, Scatter } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,8 +18,10 @@ import {
   TimeScale,
   ChartOptions,
 } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { QuantumOrb, Job as QuantumOrbJob, Predictions } from '@/components/quantum-orb';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 ChartJS.register(
   CategoryScale,
@@ -40,6 +42,14 @@ type BackendDetail = {
   predictions: Predictions;
 }
 
+type Job = {
+  id: string;
+  backend: string;
+  status: 'Queued' | 'Running' | 'Completed' | 'Failed';
+  submitted_at: string;
+  runtime_seconds: number | null;
+}
+
 type StatsData = {
     avg_wait_seconds: number;
     trends: { time: string; avg_wait_seconds: number }[];
@@ -48,11 +58,14 @@ type StatsData = {
     busiest_backend: string;
     fastest_backend: string;
     backends: BackendDetail[];
+    all_jobs: Job[];
 };
 
 export default function StatisticsPage() {
     const [statsData, setStatsData] = useState<StatsData | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string>('N/A');
+    const [historyStatusFilter, setHistoryStatusFilter] = useState('all');
+    const [historyBackendFilter, setHistoryBackendFilter] = useState('all');
 
     const fetchData = async () => {
         try {
@@ -60,7 +73,7 @@ export default function StatisticsPage() {
             const jsonData = await response.json();
             setStatsData(jsonData);
             setLastUpdated(new Date().toLocaleTimeString());
-        } catch (error) {
+        } catch (error) => {
             console.error("Failed to fetch statistics data:", error);
         }
     };
@@ -71,9 +84,66 @@ export default function StatisticsPage() {
         return () => clearInterval(interval);
     }, []);
 
+    const historyChartData = useMemo(() => {
+        if (!statsData) return { datasets: [] };
+
+        const filteredJobs = statsData.all_jobs.filter(job => {
+            const matchesStatus = historyStatusFilter === 'all' || job.status.toLowerCase() === historyStatusFilter;
+            const matchesBackend = historyBackendFilter === 'all' || job.backend === historyBackendFilter;
+            return matchesStatus && matchesBackend;
+        });
+        
+        const statusMap = {
+            Completed: {
+                data: [],
+                backgroundColor: 'hsla(140, 70%, 60%, 0.7)',
+                borderColor: 'hsl(140, 70%, 60%)',
+            },
+            Running: {
+                data: [],
+                backgroundColor: 'hsla(var(--accent), 0.7)',
+                borderColor: 'hsl(var(--accent))',
+            },
+            Failed: {
+                data: [],
+                backgroundColor: 'hsla(0, 70%, 60%, 0.7)',
+                borderColor: 'hsl(0, 70%, 60%)',
+            },
+            Queued: {
+                data: [],
+                backgroundColor: 'hsla(var(--primary), 0.7)',
+                borderColor: 'hsl(var(--primary))',
+            }
+        };
+
+        filteredJobs.forEach(job => {
+            if (job.status in statusMap && job.runtime_seconds !== null) {
+                statusMap[job.status].data.push({
+                    x: new Date(job.submitted_at).getTime(),
+                    y: job.runtime_seconds,
+                    job: job // Store full job object for tooltip
+                });
+            }
+        });
+
+        return {
+            datasets: Object.entries(statusMap).map(([status, { data, backgroundColor, borderColor }]) => ({
+                label: status,
+                data: data,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                pointRadius: 5,
+                pointHoverRadius: 8,
+            }))
+        }
+    }, [statsData, historyStatusFilter, historyBackendFilter]);
+    
+
     if (!statsData) {
         return <div className="w-full text-center text-foreground">Loading statistics...</div>;
     }
+
+    const availableBackends = statsData.backends.length > 0 ? [...new Set(statsData.backends.map(j => j.name))] : [];
 
     const chartOptions: ChartOptions = {
         responsive: true,
@@ -150,6 +220,51 @@ export default function StatisticsPage() {
     };
     const stackedBarOptions = { ...chartOptions, scales: { ...chartOptions.scales, x: { ...chartOptions.scales?.x, stacked: true }, y: { ...chartOptions.scales?.y, stacked: true } }};
 
+    const historyChartOptions: ChartOptions<'scatter'> = {
+        ...chartOptions,
+        scales: {
+            x: {
+                ...chartOptions.scales?.x,
+                type: 'time',
+                time: {
+                    unit: 'hour'
+                },
+                title: {
+                    display: true,
+                    text: 'Submission Time',
+                    color: 'hsl(var(--foreground))'
+                }
+            },
+            y: {
+                ...chartOptions.scales?.y,
+                title: {
+                    display: true,
+                    text: 'Runtime (seconds)',
+                    color: 'hsl(var(--foreground))'
+                }
+            }
+        },
+        plugins: {
+            ...chartOptions.plugins,
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const point: any = context.dataset.data[context.dataIndex];
+                        const job = point.job;
+                        if (!job) return '';
+                        return [
+                            `Job ID: ${job.id}`,
+                            `Backend: ${job.backend}`,
+                            `Status: ${job.status}`,
+                            `Runtime: ${job.runtime_seconds}s`,
+                            `Submitted: ${new Date(job.submitted_at).toLocaleString()}`
+                        ];
+                    }
+                }
+            }
+        }
+    };
+
 
   return (
     <div className="space-y-6 w-full max-w-7xl mx-auto">
@@ -167,6 +282,41 @@ export default function StatisticsPage() {
                 {statsData.backends.map((backend) => (
                     <QuantumOrb key={backend.name} backend={backend.name} jobs={backend.jobs} predictions={backend.predictions} />
                 ))}
+            </CardContent>
+        </Card>
+
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-primary">Interactive Job History Explorer</CardTitle>
+                <CardDescription className="text-muted-foreground">Explore historical job performance. Hover over points for details.</CardDescription>
+                 <div className="mt-4 flex flex-col md:flex-row gap-2">
+                        <Select value={historyStatusFilter} onValueChange={setHistoryStatusFilter}>
+                            <SelectTrigger className="w-full md:w-[180px] bg-secondary border-muted">
+                                <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Statuses</SelectItem>
+                                <SelectItem value="running">Running</SelectItem>
+                                <SelectItem value="completed">Completed</SelectItem>
+                                <SelectItem value="failed">Failed</SelectItem>
+                                <SelectItem value="queued">Queued</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Select value={historyBackendFilter} onValueChange={setHistoryBackendFilter}>
+                            <SelectTrigger className="w-full md:w-[180px] bg-secondary border-muted">
+                                <SelectValue placeholder="Filter by backend" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Backends</SelectItem>
+                                {availableBackends.map(backend => (
+                                    <SelectItem key={backend} value={backend}>{backend}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+            </CardHeader>
+            <CardContent className="h-[400px]">
+                <Scatter options={historyChartOptions} data={historyChartData} />
             </CardContent>
         </Card>
 
@@ -198,7 +348,7 @@ export default function StatisticsPage() {
                 <CardDescription className="text-muted-foreground">The current status of all submitted jobs.</CardDescription>
             </CardHeader>
             <CardContent className="h-[350px] flex justify-center">
-                <Bar options={stackedBarOptions as any} data={stackedBarChartData} />
+                <Bar options={stackedBarOptions as any} data={stackedBarData} />
             </CardContent>
         </Card>
         <Card>

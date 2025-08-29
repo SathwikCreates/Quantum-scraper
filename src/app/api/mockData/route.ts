@@ -131,11 +131,16 @@ const statsData = () => {
         };
     });
 
-    const allJobs = backendDetails.flatMap(b => b.jobs);
+    const allJobsForHistory = [
+        ...Array.from({ length: 50 }, () => generateJob('Completed')),
+        ...Array.from({ length: 10 }, () => generateJob('Running')),
+        ...Array.from({ length: 5 }, () => generateJob('Failed')),
+        ...Array.from({ length: 20 }, () => generateJob('Queued')),
+    ];
     
     return {
         total_jobs: getRandomInt(1200, 1300),
-        running_jobs: allJobs.filter(j => j.status === 'Running').length,
+        running_jobs: allJobsForHistory.filter(j => j.status === 'Running').length,
         avg_wait_seconds: getRandomInt(120, 180),
         success_rate: getRandomFloat(0.97, 0.99, 3),
         trends: [
@@ -162,7 +167,8 @@ const statsData = () => {
         busiest_backend: "ibmq_qasm_simulator",
         fastest_backend: "ibmq_qasm_simulator",
         last_updated: new Date().toISOString(),
-        backends: backendDetails
+        backends: backendDetails,
+        all_jobs: allJobsForHistory,
     }
 };
 
