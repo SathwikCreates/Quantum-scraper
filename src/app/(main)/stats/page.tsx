@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -175,7 +176,7 @@ export default function StatisticsPage() {
                 <CardTitle className="text-primary">Constellation View</CardTitle>
                 <CardDescription className="text-muted-foreground">A galactic view of your quantum backends. Each orb is a backend, and orbiting dots are queued jobs.</CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-8 p-6 place-items-center min-h-[300px]">
+            <CardContent className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-20 gap-x-8 p-6 place-items-center min-h-[300px]">
                 {Object.entries(jobsByBackend).map(([backend, jobs]) => (
                     <QuantumOrb key={backend} backend={backend} jobs={jobs} />
                 ))}
