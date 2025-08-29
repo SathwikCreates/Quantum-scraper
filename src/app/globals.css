@@ -10,13 +10,13 @@ body {
   :root {
     --background: 222 14% 16%; /* #222831 */
     --foreground: 210 17% 95%; /* #EEEEEE */
-    --card: 221 12% 22%; /* #393E46 */
+    --card: 221 12% 22% / 0.6; /* #393E46 with alpha */
     --card-foreground: 210 17% 95%; /* #EEEEEE */
     --popover: 221 12% 22%; /* #393E46 */
     --popover-foreground: 210 17% 95%; /* #EEEEEE */
     --primary: 183 100% 36%; /* #00ADB5 */
     --primary-foreground: 210 17% 95%; /* #EEEEEE */
-    --secondary: 221 12% 22%; /* #393E46 */
+    --secondary: 221 12% 22% / 0.6; /* #393E46 with alpha */
     --secondary-foreground: 210 17% 95%; /* #EEEEEE */
     --muted: 221 12% 28%; /* #414853 */
     --muted-foreground: 210 17% 80%; /* #EEEEEE with opacity */
@@ -24,8 +24,8 @@ body {
     --accent-foreground: 210 17% 95%; /* #EEEEEE */
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 221 12% 28%; /* #414853 */
-    --input: 221 12% 22%; /* #393E46 */
+    --border: 221 12% 28% / 0.5; /* #414853 with alpha */
+    --input: 221 12% 22% / 0.6; /* #393E46 with alpha */
     --ring: 183 100% 36%; /* #00ADB5 */
     --chart-1: 183 100% 36%;
     --chart-2: 210 17% 95%;
@@ -38,13 +38,13 @@ body {
   .dark {
     --background: 222 14% 16%; /* #222831 */
     --foreground: 210 17% 95%; /* #EEEEEE */
-    --card: 221 12% 22%; /* #393E46 */
+    --card: 221 12% 22% / 0.6; /* #393E46 with alpha */
     --card-foreground: 210 17% 95%; /* #EEEEEE */
     --popover: 221 12% 22%; /* #393E46 */
     --popover-foreground: 210 17% 95%; /* #EEEEEE */
     --primary: 183 100% 36%; /* #00ADB5 */
     --primary-foreground: 210 17% 95%; /* #EEEEEE */
-    --secondary: 221 12% 22%; /* #393E46 */
+    --secondary: 221 12% 22% / 0.6; /* #393E46 with alpha */
     --secondary-foreground: 210 17% 95%; /* #EEEEEE */
     --muted: 221 12% 28%; /* #414853 */
     --muted-foreground: 210 17% 80%;
@@ -52,8 +52,8 @@ body {
     --accent-foreground: 210 17% 95%; /* #EEEEEE */
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 221 12% 28%; /* #414853 */
-    --input: 221 12% 22%; /* #393E46 */
+    --border: 221 12% 28% / 0.5; /* #414853 with alpha */
+    --input: 221 12% 22% / 0.6; /* #393E46 with alpha */
     --ring: 183 100% 36%; /* #00ADB5 */
     --chart-1: 183 100% 36%;
     --chart-2: 210 17% 95%;
