@@ -80,33 +80,26 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
         />
         
         {/* Orbiting Jobs */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full">
             <AnimatePresence>
                 {queuedJobs.map((job, index) => {
                     const angle = (index / queuedJobs.length) * 2 * Math.PI;
                     const orbitRadius = radius * (1 + (index % 3) * 0.1); // Stagger orbits
+                    const x = Math.cos(angle) * orbitRadius;
+                    const y = Math.sin(angle) * orbitRadius;
                     
                     return (
                         <motion.div
                             key={job.id}
-                            className="absolute w-3.5 h-3.5 rounded-full"
+                            className="absolute"
                             style={{
-                                backgroundColor: 'hsl(var(--primary))',
-                                boxShadow: '0 0 10px 1px hsl(var(--primary) / 0.8)',
-                                transformOrigin: `${orbitRadius}px center`,
-                            }}
-                            initial={{
-                                x: -jobSize/2,
-                                y: -jobSize/2,
-                                rotate: angle * (180 / Math.PI),
+                                top: '50%',
+                                left: '50%',
+                                x: '-50%',
+                                y: '-50%',
                             }}
                             animate={{
-                                rotate: angle * (180 / Math.PI) + 360,
-                            }}
-                            exit={{
-                                scale: 0,
-                                opacity: 0,
-                                transition: { duration: 0.5 }
+                                rotate: 360,
                             }}
                             transition={{
                                 duration: 10 + (index % 3) * 2, // Vary rotation speed
@@ -114,7 +107,20 @@ export function QuantumOrb({ backend, jobs }: QuantumOrbProps) {
                                 repeat: Infinity,
                             }}
                         >
-                             <div style={{ transform: `translateX(${orbitRadius}px)` }} className="w-full h-full rounded-full" />
+                             <motion.div
+                                className="w-3.5 h-3.5 rounded-full"
+                                style={{
+                                    backgroundColor: 'hsl(var(--primary))',
+                                    boxShadow: '0 0 10px 1px hsl(var(--primary) / 0.8)',
+                                    x: x,
+                                    y: y,
+                                }}
+                                exit={{
+                                    scale: 0,
+                                    opacity: 0,
+                                    transition: { duration: 0.5 }
+                                }}
+                             />
                         </motion.div>
                     );
                 })}
